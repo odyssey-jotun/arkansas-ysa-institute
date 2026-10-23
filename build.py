@@ -3,7 +3,7 @@
 
 Edit the class time, the address and unit meeting times here, then rebuild.
 Unit times come from each unit's page on local.churchofjesuschrist.org (checked 2026-10-23).
-A photo of the house goes in images/house-800.webp and images/house-1400.webp; the
+A photo of the house goes in images/house-800.webp and images/house-858.webp; the
 Little Rock page shows it automatically when those files exist.
 """
 import html
@@ -21,7 +21,7 @@ CLASS_TIME = "Tuesdays at 7:00 PM"
 CLASS_TIME_PHRASE = "on Tuesdays at 7:00 PM"
 ADDR_SHORT = f"{ADDRESS['street']}, {ADDRESS['city']}"
 ADDR_LINE = f"{ADDRESS['street']}, {ADDRESS['city']}, {ADDRESS['state']} {ADDRESS['zip']}"
-HOUSE_PHOTO = (ROOT / "images" / "house-1400.webp").exists()
+HOUSE_PHOTO = (ROOT / "images" / "house-800.webp").exists()
 
 STAKES = [
     {
@@ -573,7 +573,8 @@ def index():
 
 def visit_media():
     if HOUSE_PHOTO:
-        return (f'<div class="photo">{picture("house", "The house at " + ADDR_SHORT + " where the class meets", [800, 1400], "(max-width: 820px) 100vw, 540px", 1400, 933)}</div>')
+        return (f'<figure class="photo house">{picture("house", "The red brick house at " + ADDR_SHORT + " where the class meets", [800, 858], "(max-width: 820px) 100vw, 540px", 858, 572)}'
+                '<figcaption>Look for the red brick house with the crape myrtle out front.</figcaption></figure>')
     return f"""<div class="sign-wrap" role="img" aria-label="Street sign for Millbrook Drive with house number {ADDRESS['street'].split()[0]}">
         <div class="street-sign">Millbrook Dr</div>
         <div class="sign-post" aria-hidden="true"></div>
@@ -621,7 +622,7 @@ def little_rock():
         <p class="address-big">{esc(ADDRESS['street'])}<br>{esc(ADDRESS['city'])}, {ADDRESS['state']} {ADDRESS['zip']}</p>
         <ul class="icon-list">
           <li><span class="icon">{icon('clock', 22)}</span><span>{CLASS_TIME}, every week of the semester</span></li>
-          <li><span class="icon">{icon('home', 22)}</span><span>A home in Benton, about 25 miles southwest of downtown Little Rock</span></li>
+          <li><span class="icon">{icon('home', 22)}</span><span>Marc and Nikki's home in Benton, about 25 miles southwest of downtown Little Rock</span></li>
           <li><span class="icon">{icon('book', 22)}</span><span>Bring scriptures or the Gospel Library app</span></li>
           <li><span class="icon">{icon('people', 22)}</span><span>Free, ages 18 to 35, friends welcome</span></li>
         </ul>
@@ -646,13 +647,13 @@ def little_rock():
 <section id="classes" class="band" aria-labelledby="classes-title">
   <div class="wrap">
     <div class="split photo-left">
-      <div class="photo tall">
-        {picture('study', 'Two young women sitting on the grass reading their scriptures together', [800, 1200], '(max-width: 820px) 100vw, 540px', 1200, 1500)}
+      <div class="photo tall hosts">
+        {picture('hosts', 'Marc and Nikki, who host the Little Rock Stake institute class, smiling together', [800, 1200], '(max-width: 820px) 100vw, 540px', 1200, 1500)}
       </div>
       <div>
-        <h2 id="classes-title">A small class in a Benton home</h2>
+        <h2 id="classes-title">A small class in Marc and Nikki's home</h2>
+        <p>Marc and Nikki open their home on Millbrook Drive to the Little Rock Stake class every Tuesday night. A living room keeps the class small enough for real discussion, and first-timers walk in the front door like everyone else.</p>
         <p>Institute began in 1926 in Moscow, Idaho, for college students who wanted their faith to keep pace with their schooling. Today the Church's Seminaries and Institutes of Religion holds classes in nearly 2,700 locations, from campus buildings to living rooms.</p>
-        <p>The Little Rock Stake class meets in a home, which keeps it small enough for real discussion. Teachers are local members called by the stake.</p>
         <div class="facts-row">
           <div class="fact"><strong>18 to 35</strong><span>single or married</span></div>
           <div class="fact"><strong>$0</strong><span>for every course</span></div>
