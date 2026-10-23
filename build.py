@@ -1,29 +1,27 @@
 #!/usr/bin/env python3
-"""Builds index.html and faq.html from the data below. Run: python3 build.py
+"""Builds index.html, little-rock.html and faq.html from the data below. Run: python3 build.py
 
-Edit class times, the address and unit meeting times here, then rebuild.
+Edit the class time, the address and unit meeting times here, then rebuild.
 Unit times come from each unit's page on local.churchofjesuschrist.org (checked 2026-10-23).
+A photo of the house goes in images/house-800.webp and images/house-1400.webp; the
+Little Rock page shows it automatically when those files exist.
 """
 import html
 import json
 import pathlib
 import re
 
+ROOT = pathlib.Path(__file__).parent
 SITE = "https://odyssey-jotun.github.io/arkansas-ysa-institute/"
 NAME = "Arkansas YSA Institute"
 
-# Where the class meets. The Little Rock Arkansas Stake's institute listing (May 2026)
-# puts the weekly class at the stake center.
-ADDRESS = {
-    "place": "Little Rock Arkansas Stake Center",
-    "street": "13901 Quail Run Drive",
-    "city": "Little Rock",
-    "state": "AR",
-    "zip": "72210",
-}
-CLASS_TIME = "Sundays, 5:00 to 6:00 PM"
-CLASS_TIME_SHORT = "Sundays at 5:00 PM"
-CLASS_TIME_PHRASE = "on Sundays from 5:00 to 6:00 PM"
+# Where and when the Little Rock Stake class meets.
+ADDRESS = {"street": "2710 Millbrook Drive", "city": "Benton", "state": "AR", "zip": "72015"}
+CLASS_TIME = "Tuesdays at 7:00 PM"
+CLASS_TIME_PHRASE = "on Tuesdays at 7:00 PM"
+ADDR_SHORT = f"{ADDRESS['street']}, {ADDRESS['city']}"
+ADDR_LINE = f"{ADDRESS['street']}, {ADDRESS['city']}, {ADDRESS['state']} {ADDRESS['zip']}"
+HOUSE_PHOTO = (ROOT / "images" / "house-1400.webp").exists()
 
 STAKES = [
     {
@@ -31,12 +29,9 @@ STAKES = [
         "name": "Little Rock Stake",
         "sub": "Little Rock, Benton, Hot Springs and south Arkansas",
         "class_title": "Little Rock Stake institute",
-        "facts": [
-            ("clock", CLASS_TIME),
-            ("pin", f"{ADDRESS['place']}, {ADDRESS['street']}, {ADDRESS['city']}"),
-            ("video", "In person or on Zoom"),
-        ],
-        "class_note": "Open to young single and married adults ages 18 to 35, and to their friends.",
+        "facts": [("clock", CLASS_TIME), ("pin", ADDR_LINE)],
+        "class_note": "The class meets in a home in Benton and is open to young single and married adults ages 18 to 35, and to their friends.",
+        "page": "little-rock.html",
         "units": [
             ("Little Rock Ward", "11:30 AM", "13901 Quail Run Drive, Little Rock"),
             ("Benton Ward", "9:00 AM", "13901 Quail Run Drive, Little Rock"),
@@ -61,9 +56,10 @@ STAKES = [
             ("pin", "North Little Rock Arkansas Stake Center, 905 Kierre Drive, North Little Rock"),
         ],
         "class_note": (
-            f"Until the schedule posts, the class at {ADDRESS['street']} in {ADDRESS['city']} "
-            f"welcomes young adults from both stakes {CLASS_TIME_PHRASE}, in person or on Zoom."
+            f"Until the schedule posts, young adults from either stake are welcome at the Little Rock Stake "
+            f"class {CLASS_TIME_PHRASE} at {ADDR_SHORT}."
         ),
+        "page": None,
         "units": [
             ("North Little Rock Ward", "10:00 AM", "905 Kierre Drive, North Little Rock"),
             ("Conway 1st Ward", "11:30 AM", "2045 Dave Ward Drive, Conway"),
@@ -76,12 +72,12 @@ STAKES = [
     },
 ]
 UNIT_COUNT = sum(len(s["units"]) for s in STAKES)
+LR_UNITS = STAKES[0]["units"]
 
 ICONS = {
     "book": '<path d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1z"/><path d="M12 6.5V20"/>',
     "pin": '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
     "clock": '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
-    "video": '<rect x="3" y="7" width="12" height="10" rx="2"/><path d="m15 11 6-3v8l-6-3z"/>',
     "person": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.5 4-5 7-5s5.8 1.5 7 5"/>',
     "heart": '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
     "map": '<path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z"/><path d="M9 4v14M15 6v14"/>',
@@ -89,6 +85,7 @@ ICONS = {
     "calendar": '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
     "people": '<circle cx="9" cy="8" r="3"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.6c2.2 0 3.9 1.2 4.5 3.9"/>',
     "question": '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.7"/><circle cx="12" cy="16.8" r=".7" fill="currentColor" stroke="none"/>',
+    "home": '<path d="M4 11.5 12 5l8 6.5"/><path d="M6 10v9.5h12V10"/><path d="M10 19.5v-5h4v5"/>',
 }
 
 
@@ -101,17 +98,18 @@ def esc(s):
     return html.escape(s, quote=True)
 
 
-ADDR_LINE = f"{ADDRESS['street']}, {ADDRESS['city']}, {ADDRESS['state']} {ADDRESS['zip']}"
-
 # FAQ: (question, answer HTML). Keyword notes: volumes are Ahrefs US monthly searches, 2026-10-23.
+FAQ_WHEN = (
+    "When and where does the Little Rock Stake institute class meet?",
+    f"<p>{CLASS_TIME} at {ADDR_LINE}, a home in Benton. The North Little Rock Stake schedule will appear on its "
+    "stake tab when it is set.</p>",
+)
 FAQ_INSTITUTE = [
     ("What is institute?",  # institute lds 1,100; lds institute 700; what is institute lds 30
      "<p>Institute of Religion is the weekly religion class that The Church of Jesus Christ of Latter-day Saints "
-     "offers young adults. Classes study the scriptures and the teachings of living prophets for about an hour, and "
-     "stake institute classes meet in local meetinghouses. Many people search for it as LDS institute or myInstitute.</p>"),
-    ("When and where does institute meet in Little Rock?",
-     f"<p>The class meets {CLASS_TIME_PHRASE} at the {ADDRESS['place']}, {ADDR_LINE}. "
-     "You can also join on Zoom. The North Little Rock Stake schedule will appear on its stake tab when it is set.</p>"),
+     "offers young adults. Classes study the scriptures and the teachings of living prophets, and they meet in "
+     "meetinghouses, campus buildings and homes. Many people search for it as LDS institute or myInstitute.</p>"),
+    FAQ_WHEN,
     ("Who can attend institute?",  # lds institute classes for adults 50
      "<p>Anyone ages 18 to 35. Young single adults are the heart of the class, and married young adults are welcome. "
      "Where enough students sign up, classes split into ages 18 to 25 and 26 to 35. Adults over 35 can ask their "
@@ -132,8 +130,8 @@ FAQ_INSTITUTE = [
      "<p>Yes. Visit a class first and register afterward. Registering near the start of a semester gives you the "
      "best chance of earning credit.</p>"),
     ("Can I take institute online?",  # online institute lds 30; online institute classes lds 30
-     "<p>The Little Rock class can be joined on Zoom. Search myInstitute for online classes as well, which help when "
-     "a work shift or a long drive is in the way.</p>"),
+     "<p>Search myInstitute for online classes, which help when a work shift or a long drive keeps you from "
+     "Tuesday night in Benton.</p>"),
     ("How do I earn institute credit?",
      "<ul><li>Attend at least 75 percent of class meetings.</li>"
      "<li>Finish the assigned reading: all of it for scripture courses, 75 percent for other courses.</li>"
@@ -219,7 +217,25 @@ def strip_tags(s):
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", s)).strip()
 
 
-def head(title, desc, path, image, extra_ld=""):
+def ld_script(obj):
+    return f'<script type="application/ld+json">{json.dumps(obj)}</script>'
+
+
+POSTAL = {
+    "@type": "PostalAddress",
+    "streetAddress": ADDRESS["street"],
+    "addressLocality": ADDRESS["city"],
+    "addressRegion": ADDRESS["state"],
+    "postalCode": ADDRESS["zip"],
+    "addressCountry": "US",
+}
+
+
+def head(title, desc, path, image, nav, extra_ld=""):
+    links = "\n      ".join(
+        f'<a href="{href}"{" aria-current=" + chr(34) + "page" + chr(34) if href == path else ""}>{label}</a>'
+        for label, href in nav
+    )
     return f"""<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -228,7 +244,7 @@ def head(title, desc, path, image, extra_ld=""):
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="robots" content="noindex, nofollow">
-<link rel="canonical" href="{SITE}{path}">
+<link rel="canonical" href="{SITE}{path if path != 'index.html' else ''}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(desc)}">
@@ -247,22 +263,19 @@ def head(title, desc, path, image, extra_ld=""):
   <div class="wrap">
     <a class="brand" href="index.html">{icon('book', 28)}<span>{NAME}</span></a>
     <nav class="site-nav" aria-label="Main">
-      <a href="index.html#stakes">Stakes</a>
-      <a href="index.html#classes">Classes</a>
-      <a href="index.html#register">Register</a>
-      <a href="faq.html"{' aria-current="page"' if path == 'faq.html' else ''}>FAQ</a>
+      {links}
     </nav>
   </div>
 </header>
 """
 
 
-def foot():
+def foot(cta_href):
     return f"""<section class="final dark" aria-labelledby="final-title">
   <div class="wrap narrow">
-    <h2 id="final-title">Bring a friend to institute this Sunday</h2>
-    <p class="lead">{CLASS_TIME_SHORT} at {esc(ADDRESS['street'])}, {esc(ADDRESS['city'])}. Free for anyone 18 to 35, in person or on Zoom.</p>
-    <a class="btn btn-cream" href="index.html#stakes">Find your class</a>
+    <h2 id="final-title">Bring a friend to institute this Tuesday</h2>
+    <p class="lead">{CLASS_TIME} at {esc(ADDR_SHORT)}. Free for anyone 18 to 35, single or married.</p>
+    <a class="btn btn-cream" href="{cta_href}">Plan your first Tuesday</a>
   </div>
 </section>
 </main>
@@ -270,12 +283,12 @@ def foot():
   <div class="wrap foot-grid">
     <div>
       <p class="foot-name">{NAME}</p>
-      <address style="font-style:normal">{esc(ADDRESS['place'])}<br>{esc(ADDRESS['street'])}<br>{esc(ADDRESS['city'])}, {ADDRESS['state']} {ADDRESS['zip']}</address>
+      <address style="font-style:normal">Little Rock Stake class, {CLASS_TIME}<br>{esc(ADDRESS['street'])}<br>{esc(ADDRESS['city'])}, {ADDRESS['state']} {ADDRESS['zip']}</address>
       <p style="margin-top:14px">An independent site for young adults in the Little Rock Arkansas Stake and the North Little Rock Arkansas Stake. It is not owned or sponsored by The Church of Jesus Christ of Latter-day Saints.</p>
     </div>
     <ul class="foot-links">
       <li><a href="index.html#stakes">Stakes and wards</a></li>
-      <li><a href="index.html#register">Register</a></li>
+      <li><a href="little-rock.html">Little Rock Stake class</a></li>
       <li><a href="faq.html">FAQ</a></li>
     </ul>
   </div>
@@ -318,11 +331,20 @@ def foot():
 """
 
 
-def picture(name, alt, widths, sizes, w, h, cls="", eager=False):
+def picture(name, alt, widths, sizes, w, h, eager=False):
     srcset = ", ".join(f"images/{name}-{x}.webp {x}w" for x in widths)
     load = 'fetchpriority="high"' if eager else 'loading="lazy" decoding="async"'
     return (f'<img src="images/{name}-{widths[0]}.webp" srcset="{srcset}" sizes="{sizes}" '
-            f'width="{w}" height="{h}" alt="{esc(alt)}" {load}{(" class=" + chr(34) + cls + chr(34)) if cls else ""}>')
+            f'width="{w}" height="{h}" alt="{esc(alt)}" {load}>')
+
+
+def unit_list(units):
+    return '<ul class="unit-list">' + "".join(
+        f'<li class="unit"><div class="unit-row"><span class="unit-name">{esc(n)}</span>'
+        f'<span class="leader" aria-hidden="true"></span><span class="unit-time">{t}</span></div>'
+        f'<div class="unit-addr">{esc(a)}</div></li>'
+        for n, t, a in units
+    ) + "</ul>"
 
 
 def stake_tabs():
@@ -334,28 +356,125 @@ def stake_tabs():
             f'<span class="tab-name">{s["name"]}</span><span class="tab-sub">{esc(s["sub"])}</span></button>'
         )
         facts = "".join(f"<li>{icon(k, 22)}<span>{esc(v)}</span></li>" for k, v in s["facts"])
-        units = "".join(
-            f'<li class="unit"><div class="unit-row"><span class="unit-name">{esc(n)}</span>'
-            f'<span class="leader" aria-hidden="true"></span><span class="unit-time">{t}</span></div>'
-            f'<div class="unit-addr">{esc(a)}</div></li>'
-            for n, t, a in s["units"]
-        )
+        if s["page"]:
+            buttons = (f'<a class="btn btn-cream" href="{s["page"]}">See the Little Rock class</a>'
+                       '<p class="card-link"><a href="#register">How to register</a></p>')
+        else:
+            buttons = '<a class="btn btn-cream" href="#register">How to register</a>'
         panels.append(f"""<div class="panel" role="tabpanel" id="panel-{s['id']}" aria-labelledby="tab-{s['id']}" tabindex="0">
   <div class="panel-grid">
     <div class="class-card">
       <h3>{s['class_title']}</h3>
       <ul class="class-facts">{facts}</ul>
       <p>{esc(s['class_note'])}</p>
-      <a class="btn btn-cream" href="#register">How to register</a>
+      {buttons}
     </div>
     <div>
-      <div class="dir-head"><h3>Wards and branches</h3><span>{len(s['units'])} units, Sunday meeting times</span></div>
-      <ul class="unit-list">{units}</ul>
+      <div class="dir-head"><h3>Wards and branches</h3><span>Sunday sacrament meeting times</span></div>
+      {unit_list(s['units'])}
     </div>
   </div>
 </div>""")
     return (f'<div class="tabs"><div class="tablist" role="tablist" aria-label="Stakes">{"".join(tabs)}</div>'
             + "\n".join(panels) + "</div>")
+
+
+PROBLEM_CARDS = """
+      <div class="card reveal">
+        <div class="icon">{pin}</div>
+        <h3>{h1}</h3>
+        <p>{p1}</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon">{person}</div>
+        <h3>Lonelier than anyone lets on</h3>
+        <p>61 percent of Americans ages 18 to 25 reported serious loneliness in a national survey. Sitting in a family ward as one of the only single adults can sharpen that on a Sunday.</p>
+        <span class="cite">Harvard Graduate School of Education, Making Caring Common, "Loneliness in America," 2021</span>
+      </div>
+      <div class="card reveal">
+        <div class="icon">{heart}</div>
+        <h3>Nobody should work out their faith alone</h3>
+        <p>Questions about the scriptures, dating, school, work and doubt deserve a room full of people asking the same ones.</p>
+      </div>"""
+
+
+def problem_cards(h1, p1):
+    return PROBLEM_CARDS.format(pin=icon("pin"), person=icon("person"), heart=icon("heart"), h1=h1, p1=p1)
+
+
+def register_steps(step1, step3):
+    return f"""<ol class="steps">
+      <li class="reveal"><div class="icon">{icon('map')}</div><h3>{step1[0]}</h3><p>{step1[1]}</p></li>
+      <li class="reveal"><div class="icon">{icon('pencil')}</div><h3>Sign up on myInstitute</h3><p>Go to <span class="url">myinstitute.churchofjesuschrist.org</span> and search for Little Rock. Members sign in with a Church account. Friends of other faiths can use Quick Signup with a name, an email and a birthdate.</p></li>
+      <li class="reveal"><div class="icon">{icon('calendar')}</div><h3>{step3[0]}</h3><p>{step3[1]}</p></li>
+    </ol>"""
+
+
+def credit_block():
+    return f"""<div class="split sub-block">
+      <div>
+        <h3 style="font-size:1.5rem">Earning institute credit</h3>
+        <p>Credit counts toward institute graduation and, at many Church schools, toward religion requirements. To earn it:</p>
+        <ul class="check-list">
+          <li>Attend at least 75 percent of class meetings.</li>
+          <li>Finish the assigned reading: all of it for scripture courses, 75 percent for other courses.</li>
+          <li>Complete the course's learning experiences.</li>
+        </ul>
+        <p class="small">BYU, BYU-Idaho, BYU-Hawaii and Ensign College each set their own transfer rules.</p>
+      </div>
+      <div class="photo">
+        {picture('notes', 'A young woman reading a book at a wooden picnic table', [800, 1200], '(max-width: 820px) 100vw, 540px', 1200, 800)}
+      </div>
+    </div>"""
+
+
+def success_block():
+    return f"""<section class="band" aria-labelledby="success-title">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <h2 id="success-title">Tuesday nights with people who share your faith</h2>
+        <p>A year of institute in central Arkansas adds up to:</p>
+        <ul class="icon-list">
+          <li><span class="icon">{icon('people', 22)}</span><span>Friends from Little Rock to Hot Springs who know your name</span></li>
+          <li><span class="icon">{icon('book', 22)}</span><span>A scripture habit that outlasts the semester</span></li>
+          <li><span class="icon">{icon('question', 22)}</span><span>Room to ask the questions you have been carrying around</span></li>
+        </ul>
+        <p class="small">Without a class, too many young adults drift through their twenties alone, one quiet Sunday at a time.</p>
+      </div>
+      <div class="photo">
+        {picture('friends', 'A group of young adults talking and laughing on a set of stone steps', [800, 1400], '(max-width: 820px) 100vw, 540px', 1400, 933)}
+      </div>
+    </div>
+  </div>
+</section>"""
+
+
+def faq_teaser(items):
+    return f"""<section id="faq" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="faq-title">Questions young adults ask first</h2>
+    </div>
+    <div class="faq-list">
+      {details(items)}
+    </div>
+    <div class="cta-row"><a class="btn btn-line" href="faq.html">Read all questions</a></div>
+  </div>
+</section>
+"""
+
+
+COURSES = f"""<div class="sub-block">
+      <h3>Courses taught in institute</h3>
+      <p class="small">Each semester's course is listed on myInstitute.</p>
+      <div class="cards four">
+        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>Jesus Christ and the Everlasting Gospel</h3><p>The life, mission and Atonement of the Savior, studied through the scriptures.</p></div>
+        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>Foundations of the Restoration</h3><p>Joseph Smith, the Doctrine and Covenants and the history of the restored Church.</p></div>
+        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>Teachings and Doctrine of the Book of Mormon</h3><p>The doctrines at the center of the Book of Mormon and how to live them.</p></div>
+        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>The Eternal Family</h3><p>Marriage, dating and family, grounded in the family proclamation.</p></div>
+      </div>
+    </div>"""
 
 
 def index():
@@ -365,23 +484,15 @@ def index():
         "name": NAME,
         "url": SITE,
         "description": "Weekly Institute of Religion classes for young adults ages 18 to 35 in the Little Rock and North Little Rock stakes.",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": ADDRESS["street"],
-            "addressLocality": ADDRESS["city"],
-            "addressRegion": ADDRESS["state"],
-            "postalCode": ADDRESS["zip"],
-            "addressCountry": "US",
-        },
+        "address": POSTAL,
         "areaServed": ["Little Rock, AR", "North Little Rock, AR", "Conway, AR", "Benton, AR", "Hot Springs, AR"],
     }
+    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Register", "index.html#register"), ("FAQ", "faq.html")]
     out = head(
         "Institute Classes in Little Rock and North Little Rock | Arkansas YSA Institute",
         "Free weekly institute classes for young adults 18 to 35 in the Little Rock and North Little Rock stakes. "
-        "Class times, our address, every ward and branch, and how to register on myInstitute.",
-        "",
-        "hero",
-        f'<script type="application/ld+json">{json.dumps(ld)}</script>',
+        "Class time and address, every ward and branch, and how to register on myInstitute.",
+        "index.html", "hero", nav, ld_script(ld),
     )
     out += f"""<main id="main">
 <section class="hero" aria-labelledby="hero-title">
@@ -390,7 +501,7 @@ def index():
     <p class="lead">Free weekly gospel study for anyone 18 to 35 in central Arkansas, single or married, members of The Church of Jesus Christ of Latter-day Saints and friends of other faiths alike.</p>
     <div class="cta-row">
       <a class="btn" href="#stakes">Find your class</a>
-      <p class="small">{CLASS_TIME_SHORT} at {esc(ADDR_LINE)}</p>
+      <p class="small">Little Rock Stake class: {CLASS_TIME} at {esc(ADDR_LINE)}</p>
     </div>
   </div>
   <div class="hero-photo">
@@ -405,7 +516,7 @@ def index():
       <p class="lead">{UNIT_COUNT} wards and branches make up the two stakes, from Danville and Russellville down to Hope and Monticello. Each tab shows the stake's institute class and every unit's Sunday meeting.</p>
     </div>
     {stake_tabs()}
-    <p class="dir-note center">Sunday times come from each unit's listing in the Church's meetinghouse locator and can change at the new year.</p>
+    <p class="dir-note center">Sunday times are for each ward's or branch's sacrament meeting, from the Church's meetinghouse locator, and can change at the new year.</p>
   </div>
 </section>
 
@@ -415,23 +526,7 @@ def index():
       <h2 id="problem-title">Being a young single adult in Arkansas can be lonely</h2>
       <p class="lead">Utah has a YSA ward on every other corner. Central Arkansas has long drives and small congregations.</p>
     </div>
-    <div class="cards">
-      <div class="card reveal">
-        <div class="icon">{icon('pin')}</div>
-        <h3>Spread across {UNIT_COUNT} congregations</h3>
-        <p>Young adults in the two stakes are scattered over a couple hundred miles of highway, and many wards and branches have only a handful of them.</p>
-      </div>
-      <div class="card reveal">
-        <div class="icon">{icon('person')}</div>
-        <h3>Lonelier than anyone lets on</h3>
-        <p>61 percent of Americans ages 18 to 25 reported serious loneliness in a national survey. Sitting in a family ward as one of the only single adults can sharpen that on a Sunday.</p>
-        <span class="cite">Harvard Graduate School of Education, Making Caring Common, "Loneliness in America," 2021</span>
-      </div>
-      <div class="card reveal">
-        <div class="icon">{icon('heart')}</div>
-        <h3>Nobody should work out their faith alone</h3>
-        <p>Questions about the scriptures, dating, school, work and doubt deserve a room full of people asking the same ones.</p>
-      </div>
+    <div class="cards">{problem_cards(f"Spread across {UNIT_COUNT} congregations", "Young adults in the two stakes are scattered over a couple hundred miles of highway, and many wards and branches have only a handful of them.")}
     </div>
   </div>
 </section>
@@ -444,25 +539,16 @@ def index():
       </div>
       <div>
         <h2 id="classes-title">A weekly class made for the years between 18 and 35</h2>
-        <p>Institute began in 1926 in Moscow, Idaho, for college students who wanted their faith to keep pace with their schooling. Today the Church's Seminaries and Institutes of Religion holds classes in nearly 2,700 locations, and both central Arkansas stakes hold one of their own.</p>
-        <p>Classes run about an hour and lean on discussion. Teachers are local members called by the stake, and the class meets in the same meetinghouse used on Sunday.</p>
+        <p>Institute began in 1926 in Moscow, Idaho, for college students who wanted their faith to keep pace with their schooling. Today the Church's Seminaries and Institutes of Religion holds classes in nearly 2,700 locations, from campus buildings to living rooms.</p>
+        <p>Classes lean on discussion, and teachers are local members called by the stake. The Little Rock Stake class meets on Tuesday nights in a home in Benton.</p>
         <div class="facts-row">
           <div class="fact"><strong>18 to 35</strong><span>single or married</span></div>
           <div class="fact"><strong>$0</strong><span>for every course</span></div>
-          <div class="fact"><strong>1 hour</strong><span>each Sunday evening</span></div>
+          <div class="fact"><strong>7 PM</strong><span>Tuesday nights</span></div>
         </div>
       </div>
     </div>
-    <div class="sub-block">
-      <h3>Courses taught in institute</h3>
-      <p class="small">Each semester's course for the stake is listed on myInstitute.</p>
-      <div class="cards four">
-        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>Jesus Christ and the Everlasting Gospel</h3><p>The life, mission and Atonement of the Savior, studied through the scriptures.</p></div>
-        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>Foundations of the Restoration</h3><p>Joseph Smith, the Doctrine and Covenants and the history of the restored Church.</p></div>
-        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>Teachings and Doctrine of the Book of Mormon</h3><p>The doctrines at the center of the Book of Mormon and how to live them.</p></div>
-        <div class="card reveal"><div class="icon">{icon('book')}</div><h3>The Eternal Family</h3><p>Marriage, dating and family, grounded in the family proclamation.</p></div>
-      </div>
-    </div>
+    {COURSES}
   </div>
 </section>
 
@@ -472,64 +558,141 @@ def index():
       <h2 id="register-title">Join a class in three steps</h2>
       <p class="lead">Members and friends of other faiths sign up the same way, and you can visit a class before you register.</p>
     </div>
-    <ol class="steps">
-      <li class="reveal"><div class="icon">{icon('map')}</div><h3>Pick your stake</h3><p>Open the <a href="#stakes">stake tabs</a> and find the class nearest where you live, work or study.</p></li>
-      <li class="reveal"><div class="icon">{icon('pencil')}</div><h3>Sign up on myInstitute</h3><p>Go to <span class="url">myinstitute.churchofjesuschrist.org</span> and search for Little Rock or North Little Rock. Members sign in with a Church account. Friends of other faiths can use Quick Signup with a name, an email and a birthdate.</p></li>
-      <li class="reveal"><div class="icon">{icon('calendar')}</div><h3>Come Sunday</h3><p>Bring scriptures or the Gospel Library app to {esc(ADDRESS['street'])} {CLASS_TIME_PHRASE}, or join on Zoom.</p></li>
-    </ol>
-    <div class="cta-row"><a class="btn" href="#stakes">See class times</a></div>
-
-    <div class="split sub-block">
-      <div>
-        <h3 style="font-size:1.5rem">Earning institute credit</h3>
-        <p>Credit counts toward institute graduation and, at many Church schools, toward religion requirements. To earn it:</p>
-        <ul class="check-list">
-          <li>Attend at least 75 percent of class meetings.</li>
-          <li>Finish the assigned reading: all of it for scripture courses, 75 percent for other courses.</li>
-          <li>Complete the course's learning experiences.</li>
-        </ul>
-        <p class="small">BYU, BYU-Idaho, BYU-Hawaii and Ensign College each set their own transfer rules.</p>
-      </div>
-      <div class="photo">
-        {picture('notes', 'A young woman reading a book at a wooden picnic table', [800, 1200], '(max-width: 820px) 100vw, 540px', 1200, 800)}
-      </div>
-    </div>
+    {register_steps(("Pick your stake", 'Open the <a href="#stakes">stake tabs</a> and find the class nearest where you live, work or study.'), ("Come Tuesday night", f"Bring scriptures or the Gospel Library app to {esc(ADDR_SHORT)} {CLASS_TIME_PHRASE}."))}
+    <div class="cta-row"><a class="btn" href="little-rock.html">See the Little Rock class</a></div>
+    {credit_block()}
   </div>
 </section>
 
-<section class="band" aria-labelledby="success-title">
+{success_block()}
+
+{faq_teaser(FAQ_TEASER)}"""
+    out += foot("little-rock.html#visit")
+    return out
+
+
+def visit_media():
+    if HOUSE_PHOTO:
+        return (f'<div class="photo">{picture("house", "The house at " + ADDR_SHORT + " where the class meets", [800, 1400], "(max-width: 820px) 100vw, 540px", 1400, 933)}</div>')
+    return f"""<div class="sign-wrap" role="img" aria-label="Street sign for Millbrook Drive with house number {ADDRESS['street'].split()[0]}">
+        <div class="street-sign">Millbrook Dr</div>
+        <div class="sign-post" aria-hidden="true"></div>
+        <div class="house-number">{ADDRESS['street'].split()[0]}</div>
+      </div>"""
+
+
+def little_rock():
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "Little Rock Stake Institute",
+        "url": SITE + "little-rock.html",
+        "description": f"Weekly Institute of Religion class for young adults ages 18 to 35 in the Little Rock Arkansas Stake, {CLASS_TIME} in Benton.",
+        "address": POSTAL,
+        "areaServed": ["Little Rock, AR", "Benton, AR", "Bryant, AR", "Hot Springs, AR", "Pine Bluff, AR", "Malvern, AR", "Arkadelphia, AR"],
+    }
+    nav = [("Where we meet", "little-rock.html#visit"), ("Wards", "little-rock.html#wards"), ("Register", "little-rock.html#register"), ("FAQ", "faq.html")]
+    out = head(
+        "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Arkansas YSA Institute",
+        f"Free institute class for young adults 18 to 35 in the Little Rock Arkansas Stake, {CLASS_TIME} at "
+        f"{ADDR_LINE}. Wards, registration and answers for first-time visitors.",
+        "little-rock.html", "hero", nav, ld_script(ld),
+    )
+    out += f"""<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap narrow">
+    <h1 id="hero-title">Little Rock Stake institute, Tuesday nights in Benton</h1>
+    <p class="lead">A free weekly gospel class for young adults 18 to 35 from Little Rock, Benton, Hot Springs, Pine Bluff and every other ward and branch in the Little Rock Arkansas Stake. Single or married, members and friends of other faiths.</p>
+    <div class="cta-row">
+      <a class="btn" href="#visit">Plan your first Tuesday</a>
+      <p class="small">{CLASS_TIME} at {esc(ADDR_LINE)}</p>
+    </div>
+  </div>
+  <div class="hero-photo">
+    {picture('hero', 'Two young women laughing together on the grass with their scriptures open', [800, 1400], '(max-width: 1180px) 100vw, 1180px', 1400, 787, eager=True)}
+  </div>
+</section>
+
+<section id="visit" class="band" aria-labelledby="visit-title">
   <div class="wrap">
     <div class="split">
       <div>
-        <h2 id="success-title">Sunday nights with people who share your faith</h2>
-        <p>A year of institute in central Arkansas adds up to:</p>
+        <h2 id="visit-title">Tuesday nights at 7 on Millbrook Drive</h2>
+        <p class="address-big">{esc(ADDRESS['street'])}<br>{esc(ADDRESS['city'])}, {ADDRESS['state']} {ADDRESS['zip']}</p>
         <ul class="icon-list">
-          <li><span class="icon">{icon('people', 22)}</span><span>Friends from Conway to Pine Bluff who know your name</span></li>
-          <li><span class="icon">{icon('book', 22)}</span><span>A scripture habit that outlasts the semester</span></li>
-          <li><span class="icon">{icon('question', 22)}</span><span>Room to ask the questions you have been carrying around</span></li>
+          <li><span class="icon">{icon('clock', 22)}</span><span>{CLASS_TIME}, every week of the semester</span></li>
+          <li><span class="icon">{icon('home', 22)}</span><span>A home in Benton, about 25 miles southwest of downtown Little Rock</span></li>
+          <li><span class="icon">{icon('book', 22)}</span><span>Bring scriptures or the Gospel Library app</span></li>
+          <li><span class="icon">{icon('people', 22)}</span><span>Free, ages 18 to 35, friends welcome</span></li>
         </ul>
-        <p class="small">Without a class, too many young adults drift through their twenties alone, one quiet Sunday at a time.</p>
+        <p class="small">First-time visitors are welcome before registering on myInstitute.</p>
       </div>
-      <div class="photo">
-        {picture('friends', 'A group of young adults talking and laughing on a set of stone steps', [800, 1400], '(max-width: 820px) 100vw, 540px', 1400, 933)}
-      </div>
+      {visit_media()}
     </div>
   </div>
 </section>
 
-<section id="faq" aria-labelledby="faq-title">
+<section aria-labelledby="problem-title">
   <div class="wrap">
     <div class="section-head">
-      <h2 id="faq-title">Questions young adults ask first</h2>
+      <h2 id="problem-title">Young single adults in the Little Rock Stake are spread thin</h2>
+      <p class="lead">Eleven wards and branches stretch from Pinnacle Mountain and Benton to Hope, Camden and Monticello.</p>
     </div>
-    <div class="faq-list">
-      {details(FAQ_TEASER)}
+    <div class="cards">{problem_cards("Eleven congregations, a lot of highway", "Young adults in the stake are scattered across south and central Arkansas, and many branches have only a handful of them.")}
     </div>
-    <div class="cta-row"><a class="btn btn-line" href="faq.html">Read all questions</a></div>
   </div>
 </section>
-"""
-    out += foot()
+
+<section id="classes" class="band" aria-labelledby="classes-title">
+  <div class="wrap">
+    <div class="split photo-left">
+      <div class="photo tall">
+        {picture('study', 'Two young women sitting on the grass reading their scriptures together', [800, 1200], '(max-width: 820px) 100vw, 540px', 1200, 1500)}
+      </div>
+      <div>
+        <h2 id="classes-title">A small class in a Benton home</h2>
+        <p>Institute began in 1926 in Moscow, Idaho, for college students who wanted their faith to keep pace with their schooling. Today the Church's Seminaries and Institutes of Religion holds classes in nearly 2,700 locations, from campus buildings to living rooms.</p>
+        <p>The Little Rock Stake class meets in a home, which keeps it small enough for real discussion. Teachers are local members called by the stake.</p>
+        <div class="facts-row">
+          <div class="fact"><strong>18 to 35</strong><span>single or married</span></div>
+          <div class="fact"><strong>$0</strong><span>for every course</span></div>
+          <div class="fact"><strong>7 PM</strong><span>Tuesday nights</span></div>
+        </div>
+      </div>
+    </div>
+    {COURSES}
+  </div>
+</section>
+
+<section id="register" aria-labelledby="register-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="register-title">Join the Tuesday class in three steps</h2>
+      <p class="lead">Members and friends of other faiths sign up the same way, and you can visit before you register.</p>
+    </div>
+    {register_steps(("Save the address", f"{esc(ADDR_LINE)}. Class starts at 7:00 PM every Tuesday."), ("Come Tuesday night", "Bring scriptures or the Gospel Library app, and bring a friend if you like."))}
+    <div class="cta-row"><a class="btn" href="#visit">See where we meet</a></div>
+    {credit_block()}
+  </div>
+</section>
+
+<section id="wards" class="band" aria-labelledby="wards-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="wards-title">Wards and branches in the Little Rock Stake</h2>
+      <p class="lead">Institute is open to young adults from every unit below. Times are each unit's Sunday sacrament meeting.</p>
+    </div>
+    <div class="ward-panel">
+      {unit_list(LR_UNITS)}
+    </div>
+    <p class="dir-note center">From the Church's meetinghouse locator; Sunday times can change at the new year. Live north of the river? See the <a href="index.html#north-little-rock-stake">North Little Rock Stake</a>.</p>
+  </div>
+</section>
+
+{success_block().replace('class="band"', 'class=""', 1)}
+
+{faq_teaser([FAQ_WHEN] + FAQ_TEASER).replace('<section id="faq"', '<section id="faq" class="band"', 1)}"""
+    out += foot("#visit")
     return out
 
 
@@ -542,13 +705,12 @@ def faq():
             for q, a in FAQ_INSTITUTE + FAQ_CHURCH
         ],
     }
+    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Register", "index.html#register"), ("FAQ", "faq.html")]
     out = head(
         "Institute and Latter-day Saint FAQ | Arkansas YSA Institute",
         "Answers about institute classes, myInstitute registration, YSA wards and common questions about what "
         "Latter-day Saints believe, for young adults in Little Rock and North Little Rock.",
-        "faq.html",
-        "faq",
-        f'<script type="application/ld+json">{json.dumps(ld)}</script>',
+        "faq.html", "faq", nav, ld_script(ld),
     )
     out += f"""<main id="main">
 <section class="hero" aria-labelledby="hero-title">
@@ -584,12 +746,12 @@ def faq():
   </div>
 </section>
 """
-    out += foot()
+    out += foot("little-rock.html#visit")
     return out
 
 
 if __name__ == "__main__":
-    root = pathlib.Path(__file__).parent
-    (root / "index.html").write_text(index())
-    (root / "faq.html").write_text(faq())
-    print("built index.html, faq.html")
+    (ROOT / "index.html").write_text(index())
+    (ROOT / "little-rock.html").write_text(little_rock())
+    (ROOT / "faq.html").write_text(faq())
+    print("built index.html, little-rock.html, faq.html", "(house photo)" if HOUSE_PHOTO else "(street sign, no house photo yet)")

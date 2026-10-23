@@ -201,3 +201,14 @@ summary:hover{color:var(--pine)}
 /* scroll fade */
 .js .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
 .js .reveal.in{opacity:1;transform:none}
+
+/* little rock page */
+.card-link{margin-top:14px;font-size:1rem}
+.card-link a{color:#E9DFC6}
+.card-link a:hover{color:#fff}
+.address-big{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:clamp(1.5rem,3vw,1.9rem);line-height:1.25;color:var(--pine);margin-bottom:22px}
+.ward-panel{max-width:1040px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,3vw,32px) clamp(20px,3.5vw,36px)}
+.sign-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:48px 20px 40px;min-height:340px}
+.street-sign{background:#1E6A44;color:#fff;border:3px solid #fff;box-shadow:0 0 0 3px #1E6A44;border-radius:8px;padding:12px 30px;font-weight:600;font-size:clamp(1.6rem,4vw,2.3rem);letter-spacing:.08em;text-transform:uppercase;line-height:1}
+.sign-post{width:10px;height:96px;background:#8E9398;border-radius:0 0 3px 3px}
+.house-number{margin-top:26px;font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:2.2rem;line-height:1;color:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:10px 22px;background:var(--paper)}
