@@ -27,8 +27,8 @@
     <a class="brand" href="index.html"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1z"/><path d="M12 6.5V20"/></svg><span>Arkansas YSA Institute</span></a>
     <nav class="site-nav" aria-label="Main">
       <a href="little-rock.html#visit">Where we meet</a>
-      <a href="little-rock.html#first-tuesday">Your first Tuesday</a>
-      <a href="little-rock.html#wards">Wards</a>
+      <a href="little-rock.html#events">Events</a>
+      <a href="little-rock.html#first-tuesday">First Tuesday</a>
       <a href="faq.html">FAQ</a>
     </nav>
   </div>
@@ -102,7 +102,46 @@
   </div>
 </section>
 
-<section id="first-tuesday" aria-labelledby="first-title">
+<section id="events" aria-labelledby="events-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="events-title">Upcoming events</h2>
+      <p class="lead">Class every Tuesday, plus the Church broadcasts made for young adults.</p>
+    </div>
+    <ul class="events">
+      <li class="event">
+        <div class="event-date" aria-hidden="true"><span class="ev-small">Every</span><span class="ev-big">Tue</span><span class="ev-small">7 PM</span></div>
+        <div class="event-body">
+          <h3>Institute class</h3>
+          <p class="ev-meta">Tuesdays at 7:00 PM, 2710 Millbrook Drive, Benton</p>
+          <p>Bring scriptures or the Gospel Library app, and bring a friend.</p>
+          <a class="ev-link" href="little-rock-institute.ics" download>Add to calendar</a>
+        </div>
+      </li><li class="event" data-date="2026-11-01">
+        <div class="event-date" aria-hidden="true"><span class="ev-small">Nov</span><span class="ev-big">1</span><span class="ev-small">Sun</span></div>
+        <div class="event-body">
+          <h3>Worldwide Devotional for Young Adults</h3>
+          <p class="ev-meta"><time datetime="2026-11-01">Sunday, November 1</time>, 7:00 PM Central. Live broadcast on Gospel Library and the Church&#x27;s YouTube channel</p>
+          <p>Elder Quentin L. Cook of the Quorum of the Twelve Apostles speaks, with Sister Mary G. Cook.</p>
+          <a class="ev-link" href="events/ysa-devotional-2026-11-01.ics" download>Add to calendar</a>
+        </div>
+      </li><li class="event" data-date="2026-12-06">
+        <div class="event-date" aria-hidden="true"><span class="ev-small">Dec</span><span class="ev-big">6</span><span class="ev-small">Sun</span></div>
+        <div class="event-body">
+          <h3>First Presidency&#x27;s Christmas Devotional</h3>
+          <p class="ev-meta"><time datetime="2026-12-06">Sunday, December 6</time>, 7:00 PM Central. Broadcast on Gospel Library and the Church&#x27;s YouTube channel</p>
+          <p>Music and messages about the birth of Jesus Christ from the First Presidency.</p>
+          <a class="ev-link" href="events/christmas-devotional-2026-12-06.ics" download>Add to calendar</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+<script>
+(function(){var t=new Date();t.setHours(0,0,0,0);document.querySelectorAll('.event[data-date]').forEach(function(el){var p=el.dataset.date.split('-');if(new Date(+p[0],p[1]-1,+p[2])<t)el.remove()})})();
+</script>
+
+<section id="first-tuesday" class="band" aria-labelledby="first-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="first-title">Your first Tuesday</h2>
@@ -117,7 +156,7 @@
   </div>
 </section>
 
-<section class="band" aria-labelledby="success-title">
+<section aria-labelledby="success-title">
   <div class="wrap">
     <div class="split photo-left">
       <div class="photo tall">
@@ -137,20 +176,20 @@
   </div>
 </section>
 
-<section id="wards" aria-labelledby="wards-title">
+<section id="wards" class="band" aria-labelledby="wards-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="wards-title">Every ward and branch in the stake is welcome</h2>
-      <p class="lead">Times below are each unit's Sunday sacrament meeting.</p>
+      <p class="lead">Institute is open to young adults from all eleven.</p>
     </div>
     <div class="ward-panel">
-      <ul class="unit-list"><li class="unit"><div class="unit-row"><span class="unit-name">Little Rock Ward</span><span class="leader" aria-hidden="true"></span><span class="unit-time">11:30 AM</span></div><div class="unit-addr">13901 Quail Run Drive, Little Rock</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Benton Ward</span><span class="leader" aria-hidden="true"></span><span class="unit-time">9:00 AM</span></div><div class="unit-addr">13901 Quail Run Drive, Little Rock</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Pinnacle Mountain Ward</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">600 South Rodney Parham Road, Little Rock</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Hot Springs Ward</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">2765 Malvern Avenue, Hot Springs</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Pine Bluff Ward</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">2501 Ridgway Road, Pine Bluff</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Arkadelphia Branch</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">2601 Twin Rivers Drive, Arkadelphia</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Camden Branch</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">859 Lakewood Road, Camden</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Glenwood Branch</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">1466 Highway 70 West, Glenwood</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Hope Branch</span><span class="leader" aria-hidden="true"></span><span class="unit-time">10:00 AM</span></div><div class="unit-addr">3069 Highway 29 North, Hope</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Malvern Branch</span><span class="leader" aria-hidden="true"></span><span class="unit-time">1:00 PM</span></div><div class="unit-addr">519 Fairview Street, Malvern</div></li><li class="unit"><div class="unit-row"><span class="unit-name">Monticello Branch</span><span class="leader" aria-hidden="true"></span><span class="unit-time">9:30 AM</span></div><div class="unit-addr">519 Glenwood Drive, Monticello</div></li></ul>
+      <ul class="unit-list"><li class="unit"><span class="unit-name">Little Rock Ward</span><span class="unit-addr">Meets in Little Rock</span></li><li class="unit"><span class="unit-name">Benton Ward</span><span class="unit-addr">Meets in Little Rock</span></li><li class="unit"><span class="unit-name">Pinnacle Mountain Ward</span><span class="unit-addr">Meets in Little Rock</span></li><li class="unit"><span class="unit-name">Hot Springs Ward</span><span class="unit-addr">Meets in Hot Springs</span></li><li class="unit"><span class="unit-name">Pine Bluff Ward</span><span class="unit-addr">Meets in Pine Bluff</span></li><li class="unit"><span class="unit-name">Arkadelphia Branch</span><span class="unit-addr">Meets in Arkadelphia</span></li><li class="unit"><span class="unit-name">Camden Branch</span><span class="unit-addr">Meets in Camden</span></li><li class="unit"><span class="unit-name">Glenwood Branch</span><span class="unit-addr">Meets in Glenwood</span></li><li class="unit"><span class="unit-name">Hope Branch</span><span class="unit-addr">Meets in Hope</span></li><li class="unit"><span class="unit-name">Malvern Branch</span><span class="unit-addr">Meets in Malvern</span></li><li class="unit"><span class="unit-name">Monticello Branch</span><span class="unit-addr">Meets in Monticello</span></li></ul>
     </div>
-    <p class="dir-note center">From the Church's meetinghouse locator; Sunday times can change at the new year. Live north of the river? See the <a href="index.html#north-little-rock-stake">North Little Rock Stake</a>.</p>
+    <p class="dir-note center">Live north of the river? See the <a href="index.html#north-little-rock-stake">North Little Rock Stake</a>.</p>
   </div>
 </section>
 
-<section id="faq" class="band" aria-labelledby="faq-title">
+<section id="faq" aria-labelledby="faq-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="faq-title">Questions people ask before their first Tuesday</h2>

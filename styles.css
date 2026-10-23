@@ -258,3 +258,19 @@ body.warm{
 .welcome{align-items:center}
 .welcome .letter{max-width:none;margin:0}
 .welcome .photo.hosts img{max-height:560px}
+
+/* units without times */
+.unit{display:flex;flex-direction:column;gap:2px}
+.unit-name{font-weight:600}
+
+/* upcoming events */
+.events{list-style:none;padding:0;margin:0 auto;max-width:860px;display:grid;gap:16px}
+.event{display:grid;grid-template-columns:92px 1fr;gap:clamp(16px,3vw,28px);align-items:start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(18px,3vw,26px)}
+.event-date{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--pine);color:var(--cream);border-radius:14px;padding:12px 6px;text-align:center;line-height:1.1}
+.ev-small{font-size:.85rem;font-weight:600;letter-spacing:.02em}
+.ev-big{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:2rem;line-height:1.05;margin:2px 0}
+.event-body h3{font-size:1.3rem}
+.ev-meta{font-weight:600;color:var(--pine-dark);font-size:1rem;margin-bottom:.5em}
+.event-body p:not(.ev-meta){color:var(--muted);font-size:1.05rem;margin-bottom:.6em}
+.ev-link{font-weight:600}
+@media (max-width:520px){.event{grid-template-columns:72px 1fr}.ev-big{font-size:1.6rem}}

@@ -145,7 +145,7 @@ FAQ_INSTITUTE = [
      "belongs to, and institute is open to you either way.</p>"),
     ("Which ward or branch do I attend?",  # lds ysa ward near me 150; ysa ward near me 150
      f"<p>Your home address decides it. The <a href=\"index.html#stakes\">stake tabs on the home page</a> list all "
-     f"{UNIT_COUNT} wards and branches in the two stakes with Sunday times and addresses. The meetinghouse locator on "
+     f"{UNIT_COUNT} wards and branches in the two stakes. The meetinghouse locator on "
      "the Church's website shows exact boundaries.</p>"),
 ]
 
@@ -201,7 +201,7 @@ FAQ_CHURCH = [
      f"<p>The two stakes have {UNIT_COUNT} wards and branches meeting in Little Rock, North Little Rock, Conway, "
      "Quitman, Morrilton, Russellville, Danville, Hot Springs, Pine Bluff, Malvern, Arkadelphia, Glenwood, Hope, "
      "Camden and Monticello. Sunday services are open to everyone. The "
-     "<a href=\"index.html#stakes\">stake tabs on the home page</a> list each one with its time and address.</p>"),
+     "<a href=\"index.html#stakes\">stake tabs on the home page</a> list each one.</p>"),
 ]
 
 FAQ_TEASER = [FAQ_INSTITUTE[2], FAQ_INSTITUTE[3], FAQ_INSTITUTE[4], FAQ_INSTITUTE[6]]
@@ -341,9 +341,8 @@ def picture(name, alt, widths, sizes, w, h, eager=False):
 
 def unit_list(units):
     return '<ul class="unit-list">' + "".join(
-        f'<li class="unit"><div class="unit-row"><span class="unit-name">{esc(n)}</span>'
-        f'<span class="leader" aria-hidden="true"></span><span class="unit-time">{t}</span></div>'
-        f'<div class="unit-addr">{esc(a)}</div></li>'
+        f'<li class="unit"><span class="unit-name">{esc(n)}</span>'
+        f'<span class="unit-addr">Meets in {esc(a.rsplit(", ", 1)[-1])}</span></li>'
         for n, t, a in units
     ) + "</ul>"
 
@@ -371,7 +370,7 @@ def stake_tabs():
       {buttons}
     </div>
     <div>
-      <div class="dir-head"><h3>Wards and branches</h3><span>Sunday sacrament meeting times</span></div>
+      <div class="dir-head"><h3>Wards and branches</h3><span>{len(s['units'])} units</span></div>
       {unit_list(s['units'])}
     </div>
   </div>
@@ -514,10 +513,10 @@ def index():
   <div class="wrap">
     <div class="section-head">
       <h2 id="stakes-title">Institute and wards in both central Arkansas stakes</h2>
-      <p class="lead">{UNIT_COUNT} wards and branches make up the two stakes, from Danville and Russellville down to Hope and Monticello. Each tab shows the stake's institute class and every unit's Sunday meeting.</p>
+      <p class="lead">{UNIT_COUNT} wards and branches make up the two stakes, from Danville and Russellville down to Hope and Monticello. Each tab shows the stake's institute class and every ward and branch in it.</p>
     </div>
     {stake_tabs()}
-    <p class="dir-note center">Sunday times are for each ward's or branch's sacrament meeting, from the Church's meetinghouse locator, and can change at the new year.</p>
+    <p class="dir-note center">Not sure which unit is yours? The meetinghouse locator on the Church's website shows each boundary.</p>
   </div>
 </section>
 
@@ -574,6 +573,70 @@ def index():
 
 ICS_FILE = "little-rock-institute.ics"
 
+# Upcoming events. Times are Central. Past events drop off at build time and in the browser.
+EVENTS = [
+    {"slug": "ysa-devotional-2026-11-01", "date": "2026-11-01", "start": "190000", "end": "200000", "time": "7:00 PM",
+     "title": "Worldwide Devotional for Young Adults",
+     "place": "Live broadcast on Gospel Library and the Church's YouTube channel",
+     "note": "Elder Quentin L. Cook of the Quorum of the Twelve Apostles speaks, with Sister Mary G. Cook."},
+    {"slug": "christmas-devotional-2026-12-06", "date": "2026-12-06", "start": "190000", "end": "200000", "time": "7:00 PM",
+     "title": "First Presidency's Christmas Devotional",
+     "place": "Broadcast on Gospel Library and the Church's YouTube channel",
+     "note": "Music and messages about the birth of Jesus Christ from the First Presidency."},
+]
+BUILD_DATE = "2026-10-23"
+
+
+def event_ics(e):
+    loc = e["place"].replace(",", "\\,")
+    day = e["date"].replace("-", "")
+    return "\r\n".join([
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arkansas YSA Institute//Events//EN", "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT", f"UID:{e['slug']}@odyssey-jotun.github.io", "DTSTAMP:20261023T000000Z",
+        f"DTSTART;TZID=America/Chicago:{day}T{e['start']}", f"DTEND;TZID=America/Chicago:{day}T{e['end']}",
+        f"SUMMARY:{e['title']}", f"LOCATION:{loc}", f"DESCRIPTION:{e['note']}",
+        "END:VEVENT", "END:VCALENDAR", ""])
+
+
+def events_section():
+    import datetime as dt
+    rows = [f"""<li class="event">
+        <div class="event-date" aria-hidden="true"><span class="ev-small">Every</span><span class="ev-big">Tue</span><span class="ev-small">7 PM</span></div>
+        <div class="event-body">
+          <h3>Institute class</h3>
+          <p class="ev-meta">{CLASS_TIME}, {esc(ADDR_SHORT)}</p>
+          <p>Bring scriptures or the Gospel Library app, and bring a friend.</p>
+          <a class="ev-link" href="{ICS_FILE}" download>Add to calendar</a>
+        </div>
+      </li>"""]
+    for e in EVENTS:
+        if e["date"] < BUILD_DATE:
+            continue
+        d = dt.date.fromisoformat(e["date"])
+        rows.append(f"""<li class="event" data-date="{e['date']}">
+        <div class="event-date" aria-hidden="true"><span class="ev-small">{d.strftime('%b')}</span><span class="ev-big">{d.day}</span><span class="ev-small">{d.strftime('%a')}</span></div>
+        <div class="event-body">
+          <h3>{esc(e['title'])}</h3>
+          <p class="ev-meta"><time datetime="{e['date']}">{d.strftime('%A, %B')} {d.day}</time>, {e['time']} Central. {esc(e['place'])}</p>
+          <p>{esc(e['note'])}</p>
+          <a class="ev-link" href="events/{e['slug']}.ics" download>Add to calendar</a>
+        </div>
+      </li>""")
+    return f"""<section id="events" aria-labelledby="events-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="events-title">Upcoming events</h2>
+      <p class="lead">Class every Tuesday, plus the Church broadcasts made for young adults.</p>
+    </div>
+    <ul class="events">
+      {''.join(rows)}
+    </ul>
+  </div>
+</section>
+<script>
+(function(){{var t=new Date();t.setHours(0,0,0,0);document.querySelectorAll('.event[data-date]').forEach(function(el){{var p=el.dataset.date.split('-');if(new Date(+p[0],p[1]-1,+p[2])<t)el.remove()}})}})();
+</script>"""
+
 
 def ics():
     loc = ADDR_LINE.replace(",", "\\,")
@@ -612,7 +675,7 @@ def little_rock():
         "address": POSTAL,
         "areaServed": ["Little Rock, AR", "Benton, AR", "Bryant, AR", "Hot Springs, AR", "Pine Bluff, AR", "Malvern, AR", "Arkadelphia, AR"],
     }
-    nav = [("Where we meet", "little-rock.html#visit"), ("Your first Tuesday", "little-rock.html#first-tuesday"), ("Wards", "little-rock.html#wards"), ("FAQ", "faq.html")]
+    nav = [("Where we meet", "little-rock.html#visit"), ("Events", "little-rock.html#events"), ("First Tuesday", "little-rock.html#first-tuesday"), ("FAQ", "faq.html")]
     extra = (ld_script(ld) + '\n<link rel="preload" href="fonts/caveat-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>')
     out = head(
         "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Arkansas YSA Institute",
@@ -689,7 +752,9 @@ def little_rock():
   </div>
 </section>
 
-<section id="first-tuesday" aria-labelledby="first-title">
+{events_section()}
+
+<section id="first-tuesday" class="band" aria-labelledby="first-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="first-title">Your first Tuesday</h2>
@@ -704,7 +769,7 @@ def little_rock():
   </div>
 </section>
 
-<section class="band" aria-labelledby="success-title">
+<section aria-labelledby="success-title">
   <div class="wrap">
     <div class="split photo-left">
       <div class="photo tall">
@@ -724,20 +789,20 @@ def little_rock():
   </div>
 </section>
 
-<section id="wards" aria-labelledby="wards-title">
+<section id="wards" class="band" aria-labelledby="wards-title">
   <div class="wrap">
     <div class="section-head">
       <h2 id="wards-title">Every ward and branch in the stake is welcome</h2>
-      <p class="lead">Times below are each unit's Sunday sacrament meeting.</p>
+      <p class="lead">Institute is open to young adults from all eleven.</p>
     </div>
     <div class="ward-panel">
       {unit_list(LR_UNITS)}
     </div>
-    <p class="dir-note center">From the Church's meetinghouse locator; Sunday times can change at the new year. Live north of the river? See the <a href="index.html#north-little-rock-stake">North Little Rock Stake</a>.</p>
+    <p class="dir-note center">Live north of the river? See the <a href="index.html#north-little-rock-stake">North Little Rock Stake</a>.</p>
   </div>
 </section>
 
-{faq_teaser([FAQ_WHEN] + FAQ_TEASER).replace('<section id="faq"', '<section id="faq" class="band"', 1).replace('Questions young adults ask first', 'Questions people ask before their first Tuesday')}"""
+{faq_teaser([FAQ_WHEN] + FAQ_TEASER).replace('Questions young adults ask first', 'Questions people ask before their first Tuesday')}"""
     out += foot("#visit", heading="We'll save you a seat", label="Plan your first Tuesday")
     return out
 
@@ -822,4 +887,7 @@ if __name__ == "__main__":
     (ROOT / "faq.html").write_text(faq())
     (ROOT / "new-to-the-church.html").write_text(church_faq())
     (ROOT / ICS_FILE).write_bytes(ics().encode("utf-8"))
+    (ROOT / "events").mkdir(exist_ok=True)
+    for e in EVENTS:
+        (ROOT / "events" / f"{e['slug']}.ics").write_bytes(event_ics(e).encode("utf-8"))
     print("built index.html, little-rock.html, faq.html", "(house photo)" if HOUSE_PHOTO else "(street sign, no house photo yet)")
