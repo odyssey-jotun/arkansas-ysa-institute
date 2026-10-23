@@ -290,6 +290,7 @@ def foot(cta_href, heading="Bring a friend to institute this Tuesday", label="Pl
       <li><a href="index.html#stakes">Stakes and wards</a></li>
       <li><a href="little-rock.html">Little Rock Stake class</a></li>
       <li><a href="faq.html">FAQ</a></li>
+      <li><a href="new-to-the-church.html">New to the Church?</a></li>
     </ul>
   </div>
 </footer>
@@ -617,20 +618,24 @@ def little_rock():
         "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Arkansas YSA Institute",
         f"Institute for young adults 18 to 35 in the Little Rock Arkansas Stake, {CLASS_TIME} at Marc and Nikki's home, "
         f"{ADDR_LINE}. Free, friends welcome.",
-        "little-rock.html", "hosts-wide", nav, extra, body_class="warm",
+        "little-rock.html", "ysa-home", nav, extra, body_class="warm",
     )
     out += f"""<main id="main">
-<section class="hero" aria-labelledby="hero-title">
-  <div class="wrap narrow">
-    <h1 id="hero-title">Institute at our house, Tuesday nights in Benton</h1>
-    <p class="lead">Young adults from across the Little Rock Stake gather in our living room every Tuesday at 7 to study the gospel together. Single or married, members or friends of other faiths, everyone 18 to 35 is welcome.</p>
-    <div class="cta-row">
-      <a class="btn" href="#visit">Come this Tuesday</a>
-      <p class="small">7:00 PM at {esc(ADDR_LINE)}</p>
+<section class="hero split-hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <div class="split">
+      <div class="hero-copy">
+        <h1 id="hero-title">Institute night for young adults in the Little Rock Stake</h1>
+        <p class="lead">Every Tuesday at 7, young single and married adults ages 18 to 35 gather in a home in Benton to study the gospel and make friends from across the stake. Members and friends of other faiths are welcome.</p>
+        <div class="cta-row">
+          <a class="btn" href="#visit">Come this Tuesday</a>
+          <p class="small">7:00 PM at {esc(ADDR_LINE)}</p>
+        </div>
+      </div>
+      <div class="photo hero-side">
+        {picture('ysa-home', 'Six young adults smiling together on a yellow couch in a living room', [800, 1400, 2100], '(max-width: 820px) 100vw, 560px', 1400, 840, eager=True)}
+      </div>
     </div>
-  </div>
-  <div class="hero-photo framed">
-    {picture('hosts-wide', 'Marc and Nikki, who host the Little Rock Stake institute class in their home, smiling together', [800, 1400], '(max-width: 800px) 100vw, 760px', 1400, 933, eager=True)}
   </div>
 </section>
 
@@ -650,12 +655,17 @@ def little_rock():
 
 <section id="welcome" aria-labelledby="welcome-title">
   <div class="wrap">
-    <div class="letter">
-      <h2 id="welcome-title">Hi, we're Marc and Nikki</h2>
-      <p>Every Tuesday at 7, we open our home in Benton for the Little Rock Stake's institute class.</p>
-      <p>Whether you're coming straight from work, driving in from Hot Springs or Pine Bluff, or opening the Book of Mormon for the first time, you're welcome here. Single, married, member or friend of another faith, if you're 18 to 35, this class is for you.</p>
-      <p>Bring your scriptures or the Gospel Library app, and bring a friend if you like. We'll save you a seat.</p>
-      <p class="sig">Marc &amp; Nikki</p>
+    <div class="split photo-left welcome">
+      <div class="photo tall hosts">
+        {picture('hosts', 'Marc and Nikki, who host the Little Rock Stake institute class in their home, smiling together', [800, 1200], '(max-width: 820px) 100vw, 480px', 1200, 1500)}
+      </div>
+      <div class="letter">
+        <h2 id="welcome-title">Hi, we're Marc and Nikki</h2>
+        <p>Every Tuesday at 7, we open our home in Benton for the Little Rock Stake's institute class.</p>
+        <p>Whether you're coming straight from work, driving in from Hot Springs or Pine Bluff, or opening the Book of Mormon for the first time, you're welcome here. Single, married, member or friend of another faith, if you're 18 to 35, this class is for you.</p>
+        <p>Bring your scriptures or the Gospel Library app, and bring a friend if you like. We'll save you a seat.</p>
+        <p class="sig">Marc &amp; Nikki</p>
+      </div>
     </div>
   </div>
 </section>
@@ -732,31 +742,30 @@ def little_rock():
     return out
 
 
-def faq():
-    ld = {
+def faq_ld(items):
+    return {
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": strip_tags(a)}}
-            for q, a in FAQ_INSTITUTE + FAQ_CHURCH
+            for q, a in items
         ],
     }
+
+
+def faq():
     nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Register", "index.html#register"), ("FAQ", "faq.html")]
     out = head(
-        "Institute and Latter-day Saint FAQ | Arkansas YSA Institute",
-        "Answers about institute classes, myInstitute registration, YSA wards and common questions about what "
-        "Latter-day Saints believe, for young adults in Little Rock and North Little Rock.",
-        "faq.html", "faq", nav, ld_script(ld),
+        "Institute FAQ: Classes, myInstitute and YSA Wards | Arkansas YSA Institute",
+        "Answers about institute classes, myInstitute registration, credit and YSA wards for young adults in the "
+        "Little Rock and North Little Rock stakes.",
+        "faq.html", "faq", nav, ld_script(faq_ld(FAQ_INSTITUTE)),
     )
     out += f"""<main id="main">
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap narrow">
-    <h1 id="hero-title">Questions about institute and the Church of Jesus Christ</h1>
-    <p class="lead">Answers for young adults in the Little Rock and North Little Rock stakes, and for friends curious about what Latter-day Saints believe.</p>
-    <nav class="jump" aria-label="On this page">
-      <a href="#institute">Institute in central Arkansas</a>
-      <a href="#church">Questions about Latter-day Saints</a>
-    </nav>
+    <h1 id="hero-title">Questions about institute in central Arkansas</h1>
+    <p class="lead">Class times, registration, credit and which ward is yours, for young adults in the Little Rock and North Little Rock stakes.</p>
   </div>
   <div class="hero-photo">
     {picture('faq', 'Three young adults talking and smiling outside a building', [800, 1400], '(max-width: 1180px) 100vw, 1180px', 1400, 933, eager=True)}
@@ -765,19 +774,40 @@ def faq():
 
 <section class="band">
   <div class="wrap">
-    <div class="faq-group" id="institute">
-      <h2>Institute in central Arkansas</h2>
-      <p class="small">Class times, registration, credit and which ward is yours.</p>
-      <div class="faq-list">
-        {details(FAQ_INSTITUTE)}
-      </div>
+    <div class="faq-list">
+      {details(FAQ_INSTITUTE)}
     </div>
-    <div class="faq-group" id="church">
-      <h2>Questions people ask about Latter-day Saints</h2>
-      <p class="small">Plain answers to the questions friends search for before their first visit.</p>
-      <div class="faq-list">
-        {details(FAQ_CHURCH)}
-      </div>
+    <p class="dir-note center">New to the Church of Jesus Christ? <a href="new-to-the-church.html">Read answers to common questions about Latter-day Saints.</a></p>
+  </div>
+</section>
+"""
+    out += foot("little-rock.html#visit")
+    return out
+
+
+def church_faq():
+    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Register", "index.html#register"), ("FAQ", "faq.html")]
+    out = head(
+        "New to the Church of Jesus Christ? Common Questions | Arkansas YSA Institute",
+        "Plain answers to common questions about Latter-day Saints: beliefs about Jesus Christ, the Book of Mormon, "
+        "coffee and the Word of Wisdom, temples and where the Church meets in central Arkansas.",
+        "new-to-the-church.html", "faq", nav, ld_script(faq_ld(FAQ_CHURCH)),
+    )
+    out += f"""<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap narrow">
+    <h1 id="hero-title">New to the Church of Jesus Christ?</h1>
+    <p class="lead">Plain answers to the questions friends of other faiths ask before their first visit.</p>
+  </div>
+  <div class="hero-photo">
+    {picture('faq', 'Three young adults talking and smiling outside a building', [800, 1400], '(max-width: 1180px) 100vw, 1180px', 1400, 933, eager=True)}
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="faq-list">
+      {details(FAQ_CHURCH)}
     </div>
   </div>
 </section>
@@ -790,5 +820,6 @@ if __name__ == "__main__":
     (ROOT / "index.html").write_text(index())
     (ROOT / "little-rock.html").write_text(little_rock())
     (ROOT / "faq.html").write_text(faq())
+    (ROOT / "new-to-the-church.html").write_text(church_faq())
     (ROOT / ICS_FILE).write_bytes(ics().encode("utf-8"))
     print("built index.html, little-rock.html, faq.html", "(house photo)" if HOUSE_PHOTO else "(street sign, no house photo yet)")
