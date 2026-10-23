@@ -215,3 +215,32 @@ summary:hover{color:var(--pine)}
 .house{margin:0}
 .house figcaption{font-size:.95rem;color:var(--muted);margin-top:10px;text-align:center}
 @media (max-width:820px){.photo.hosts img{aspect-ratio:1/1;object-position:50% 12%}}
+
+/* warm theme (Little Rock page) */
+@font-face{font-family:"Caveat";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/caveat-latin-600-normal.woff2) format("woff2")}
+body.warm{
+  --paper:#FBF6EC;
+  --paper-2:#F4E8D4;
+  --card:#FFFCF6;
+  --ink:#2E2420;
+  --muted:#5E5048;
+  --pine:#8A3324;
+  --pine-dark:#3E2A22;
+  --river:#6E271B;
+  --brass:#C99A3B;
+  --cream:#FBF1DE;
+  --line:#E6D7BF;
+}
+.warm .site-head{background:rgba(251,246,236,.96)}
+.warm .icon{background:#F6E2B5;color:#7A2E22}
+.warm .band .icon{background:#FBEFD2}
+.warm .dark .lead{color:#E8DCC6}
+.warm .hero-photo.framed{max-width:800px}
+.warm .hero-photo.framed img{aspect-ratio:3/2;object-position:50% 40%}
+@media (max-width:640px){.warm .hero-photo.framed img{aspect-ratio:4/3;object-position:46% 30%}}
+.soft-points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,4vw,52px);max-width:1040px;margin:0 auto;text-align:center}
+.soft-points p{color:var(--muted);font-size:1.05rem}
+@media (max-width:820px){.soft-points{grid-template-columns:1fr;max-width:520px}}
+.letter{max-width:720px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:clamp(28px,5vw,56px);font-size:1.2rem;line-height:1.7}
+.letter .sig{font-family:"Caveat","Bradley Hand",cursive;font-weight:600;font-size:2.7rem;line-height:1;color:var(--pine);margin-top:18px}
+.steps.soft li{background:transparent;border:none;padding:8px 12px}
