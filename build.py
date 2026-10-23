@@ -16,11 +16,12 @@ SITE = "https://odyssey-jotun.github.io/arkansas-ysa-institute/"
 NAME = "Arkansas YSA Institute"
 
 # Where and when the Little Rock Stake class meets.
-ADDRESS = {"street": "2710 Millbrook Drive", "city": "Benton", "state": "AR", "zip": "72015"}
+ADDRESS = {"city": "Benton", "state": "AR"}
+ADDR_SHORT = "Benton"
+ADDR_LINE = "Benton, AR"
+ADDRESS_NOTE = "Sign up on myInstitute and we'll send you the address."
 CLASS_TIME = "Tuesdays at 7:00 PM"
 CLASS_TIME_PHRASE = "on Tuesdays at 7:00 PM"
-ADDR_SHORT = f"{ADDRESS['street']}, {ADDRESS['city']}"
-ADDR_LINE = f"{ADDRESS['street']}, {ADDRESS['city']}, {ADDRESS['state']} {ADDRESS['zip']}"
 HOUSE_PHOTO = (ROOT / "images" / "house-800.webp").exists()
 
 STAKES = [
@@ -29,7 +30,7 @@ STAKES = [
         "name": "Little Rock Stake",
         "sub": "Little Rock, Benton, Hot Springs and south Arkansas",
         "class_title": "Little Rock Stake institute",
-        "facts": [("clock", CLASS_TIME), ("pin", ADDR_LINE)],
+        "facts": [("clock", CLASS_TIME), ("pin", "A home in Benton")],
         "class_note": "The class meets in a home in Benton and is open to young single and married adults ages 18 to 35, and to their friends.",
         "page": "little-rock.html",
         "units": [
@@ -57,7 +58,7 @@ STAKES = [
         ],
         "class_note": (
             f"Until the schedule posts, young adults from either stake are welcome at the Little Rock Stake "
-            f"class {CLASS_TIME_PHRASE} at {ADDR_SHORT}."
+            f"class {CLASS_TIME_PHRASE} in Benton."
         ),
         "page": None,
         "units": [
@@ -101,7 +102,7 @@ def esc(s):
 # FAQ: (question, answer HTML). Keyword notes: volumes are Ahrefs US monthly searches, 2026-10-23.
 FAQ_WHEN = (
     "When and where does the Little Rock Stake institute class meet?",
-    f"<p>{CLASS_TIME} at {ADDR_LINE}, a home in Benton. The North Little Rock Stake schedule will appear on its "
+    f"<p>{CLASS_TIME} in a home in Benton. {ADDRESS_NOTE} The North Little Rock Stake schedule will appear on its "
     "stake tab when it is set.</p>",
 )
 FAQ_INSTITUTE = [
@@ -223,10 +224,8 @@ def ld_script(obj):
 
 POSTAL = {
     "@type": "PostalAddress",
-    "streetAddress": ADDRESS["street"],
     "addressLocality": ADDRESS["city"],
     "addressRegion": ADDRESS["state"],
-    "postalCode": ADDRESS["zip"],
     "addressCountry": "US",
 }
 
@@ -274,7 +273,7 @@ def foot(cta_href, heading="Bring a friend to institute this Tuesday", label="Pl
     return f"""<section class="final dark" aria-labelledby="final-title">
   <div class="wrap narrow">
     <h2 id="final-title">{heading}</h2>
-    <p class="lead">{CLASS_TIME} at {esc(ADDR_SHORT)}. Free for anyone 18 to 35, single or married.</p>
+    <p class="lead">{CLASS_TIME} in Benton. Free for anyone 18 to 35, single or married.</p>
     <a class="btn btn-cream" href="{cta_href}">{label}</a>
   </div>
 </section>
@@ -283,7 +282,7 @@ def foot(cta_href, heading="Bring a friend to institute this Tuesday", label="Pl
   <div class="wrap foot-grid">
     <div>
       <p class="foot-name">{NAME}</p>
-      <address style="font-style:normal">Little Rock Stake class, {CLASS_TIME}<br>{esc(ADDRESS['street'])}<br>{esc(ADDRESS['city'])}, {ADDRESS['state']} {ADDRESS['zip']}</address>
+      <p>Little Rock Stake class<br>{CLASS_TIME} in Benton, Arkansas</p>
       <p style="margin-top:14px">An independent site for young adults in the Little Rock Arkansas Stake and the North Little Rock Arkansas Stake. It is not owned or sponsored by The Church of Jesus Christ of Latter-day Saints.</p>
     </div>
     <ul class="foot-links">
@@ -501,7 +500,7 @@ def index():
     <p class="lead">Free weekly gospel study for anyone 18 to 35 in central Arkansas, single or married, members of The Church of Jesus Christ of Latter-day Saints and friends of other faiths alike.</p>
     <div class="cta-row">
       <a class="btn" href="#stakes">Find your class</a>
-      <p class="small">Little Rock Stake class: {CLASS_TIME} at {esc(ADDR_LINE)}</p>
+      <p class="small">Little Rock Stake class: {CLASS_TIME} in Benton</p>
     </div>
   </div>
   <div class="hero-photo">
@@ -558,7 +557,7 @@ def index():
       <h2 id="register-title">Join a class in three steps</h2>
       <p class="lead">Members and friends of other faiths sign up the same way, and you can visit a class before you register.</p>
     </div>
-    {register_steps(("Pick your stake", 'Open the <a href="#stakes">stake tabs</a> and find the class nearest where you live, work or study.'), ("Come Tuesday night", f"Bring scriptures or the Gospel Library app to {esc(ADDR_SHORT)} {CLASS_TIME_PHRASE}."))}
+    {register_steps(("Pick your stake", 'Open the <a href="#stakes">stake tabs</a> and find the class nearest where you live, work or study.'), ("Come Tuesday night", f"Bring scriptures or the Gospel Library app to the class in Benton {CLASS_TIME_PHRASE}."))}
     <div class="cta-row"><a class="btn" href="little-rock.html">See the Little Rock class</a></div>
     {credit_block()}
   </div>
@@ -604,7 +603,7 @@ def events_section():
         <div class="event-date" aria-hidden="true"><span class="ev-small">Every</span><span class="ev-big">Tue</span><span class="ev-small">7 PM</span></div>
         <div class="event-body">
           <h3>Institute class</h3>
-          <p class="ev-meta">{CLASS_TIME}, {esc(ADDR_SHORT)}</p>
+          <p class="ev-meta">{CLASS_TIME}, a home in Benton</p>
           <p>Bring scriptures or the Gospel Library app, and bring a friend.</p>
           <a class="ev-link" href="{ICS_FILE}" download>Add to calendar</a>
         </div>
@@ -639,7 +638,7 @@ def events_section():
 
 
 def ics():
-    loc = ADDR_LINE.replace(",", "\\,")
+    loc = "Benton\\, AR"
     return "\r\n".join([
         "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arkansas YSA Institute//Little Rock Stake//EN", "CALSCALE:GREGORIAN",
         "BEGIN:VTIMEZONE", "TZID:America/Chicago",
@@ -656,13 +655,9 @@ def ics():
 
 def visit_media():
     if HOUSE_PHOTO:
-        return (f'<figure class="photo house">{picture("house", "The red brick house at " + ADDR_SHORT + " where the class meets", [800, 858], "(max-width: 820px) 100vw, 540px", 858, 572)}'
+        return (f'<figure class="photo house">{picture("house", "The red brick house in Benton where the class meets", [800, 858], "(max-width: 820px) 100vw, 540px", 858, 572)}'
                 '<figcaption>Look for the red brick house with the crape myrtle out front.</figcaption></figure>')
-    return f"""<div class="sign-wrap" role="img" aria-label="Street sign for Millbrook Drive with house number {ADDRESS['street'].split()[0]}">
-        <div class="street-sign">Millbrook Dr</div>
-        <div class="sign-post" aria-hidden="true"></div>
-        <div class="house-number">{ADDRESS['street'].split()[0]}</div>
-      </div>"""
+    return """<div class="sign-wrap"><p class="address-big">A home in Benton</p></div>"""
 
 
 def little_rock():
@@ -680,7 +675,7 @@ def little_rock():
     out = head(
         "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Arkansas YSA Institute",
         f"Institute for young adults 18 to 35 in the Little Rock Arkansas Stake, {CLASS_TIME} at Marc and Nikki's home, "
-        f"{ADDR_LINE}. Free, friends welcome.",
+        "Benton. Free, friends welcome.",
         "little-rock.html", "ysa-home", nav, extra, body_class="warm",
     )
     out += f"""<main id="main">
@@ -692,7 +687,7 @@ def little_rock():
         <p class="lead">Every Tuesday at 7, young single and married adults ages 18 to 35 gather in a home in Benton to study the gospel and make friends from across the stake. Members and friends of other faiths are welcome.</p>
         <div class="cta-row">
           <a class="btn" href="#visit">Come this Tuesday</a>
-          <p class="small">7:00 PM at {esc(ADDR_LINE)}</p>
+          <p class="small">Tuesdays at 7:00 PM in Benton, Arkansas</p>
         </div>
       </div>
       <div class="photo hero-side">
@@ -737,8 +732,8 @@ def little_rock():
   <div class="wrap">
     <div class="split">
       <div>
-        <h2 id="visit-title">Tuesday nights at 7 on Millbrook Drive</h2>
-        <p class="address-big">{esc(ADDRESS['street'])}<br>{esc(ADDRESS['city'])}, {ADDRESS['state']} {ADDRESS['zip']}</p>
+        <h2 id="visit-title">Tuesday nights at 7 in Benton</h2>
+        <p class="lead">{ADDRESS_NOTE}</p>
         <ul class="icon-list">
           <li><span class="icon">{icon('clock', 22)}</span><span>Every Tuesday at 7:00 PM</span></li>
           <li><span class="icon">{icon('home', 22)}</span><span>Our home, about 25 miles southwest of downtown Little Rock</span></li>
@@ -763,7 +758,7 @@ def little_rock():
     <ol class="steps soft">
       <li class="reveal"><div class="icon">{icon('pencil')}</div><h3>Sign up on myInstitute</h3><p>Search <span class="url">myinstitute.churchofjesuschrist.org</span> for Little Rock. Friends of other faiths can use Quick Signup with just a name, an email and a birthdate.</p></li>
       <li class="reveal"><div class="icon">{icon('calendar')}</div><h3>Save the date</h3><p>Add Tuesdays at 7 to your calendar so the week doesn't swallow it.</p></li>
-      <li class="reveal"><div class="icon">{icon('home')}</div><h3>Knock on the door</h3><p>Come to {esc(ADDRESS['street'])} with your scriptures or your phone, and bring a friend if you like.</p></li>
+      <li class="reveal"><div class="icon">{icon('home')}</div><h3>Knock on the door</h3><p>Come to the house with your scriptures or your phone, and bring a friend if you like.</p></li>
     </ol>
     <div class="cta-row"><a class="btn" href="{ICS_FILE}" download>Add Tuesdays to your calendar</a></div>
   </div>

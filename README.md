@@ -14,7 +14,7 @@ python3 build.py
 
 In `build.py`:
 
-- `ADDRESS`, `CLASS_TIME`: where and when the Little Rock Stake class meets (Tuesdays at 7:00 PM, 2710 Millbrook Drive, Benton). Shown on every page.
+- `ADDRESS`, `CLASS_TIME`: where and when the Little Rock Stake class meets (Tuesdays at 7:00 PM in Benton). City only: the street address stays off the site.
 - House photo: save it as `images/house-800.webp` and `images/house-858.webp` (3:2) and rebuild. Current photo is a Google Street View frame (stand-in); swap in Marc's own photo when he saves it.
 - `STAKES`: each stake's tab, class card and units with Sunday times
 - `FAQ_INSTITUTE`, `FAQ_CHURCH`: FAQ questions and answers (also written into FAQPage structured data)
