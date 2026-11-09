@@ -2,13 +2,30 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Arkansas YSA Institute//Events//EN
 CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:America/Chicago
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0500
+TZNAME:CDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0600
+TZNAME:CST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
 BEGIN:VEVENT
 UID:bednar-devotional-2026-11-21@odyssey-jotun.github.io
 DTSTAMP:20261023T000000Z
 DTSTART;TZID=America/Chicago:20261121T160000
 DTEND;TZID=America/Chicago:20261121T180000
-SUMMARY:Young Adult Devotional with Elder David A. Bednar
+SUMMARY:Young Adult Devotional with Elder Eric Bednar
 LOCATION:Little Rock Arkansas Stake Center\, 13901 Quail Run Drive\, Little Rock
-DESCRIPTION:Dinner from 4:00 to 4:45, then Elder Bednar of the Quorum of the Twelve Apostles speaks from 5:00 to 6:00. For young adults 18 to 35, single and married, from the Little Rock, North Little Rock and Searcy stakes.
+DESCRIPTION:Dinner from 4:00 to 4:45, then Elder Eric Bednar, an Area Seventy, speaks from 5:00 to 6:00. For young adults 18 to 35, single and married, from the Little Rock, North Little Rock and Searcy stakes.
 END:VEVENT
 END:VCALENDAR

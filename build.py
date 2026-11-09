@@ -575,9 +575,9 @@ ICS_FILE = "little-rock-institute.ics"
 # Upcoming events. Times are Central. Past events drop off at build time and in the browser.
 EVENTS = [
     {"slug": "bednar-devotional-2026-11-21", "date": "2026-11-21", "start": "160000", "end": "180000", "time": "4:00 PM",
-     "title": "Young Adult Devotional with Elder David A. Bednar",
+     "title": "Young Adult Devotional with Elder Eric Bednar",
      "place": "Little Rock Arkansas Stake Center, 13901 Quail Run Drive, Little Rock",
-     "note": "Dinner from 4:00 to 4:45, then Elder Bednar of the Quorum of the Twelve Apostles speaks from 5:00 to 6:00. "
+     "note": "Dinner from 4:00 to 4:45, then Elder Eric Bednar, an Area Seventy, speaks from 5:00 to 6:00. "
              "For young adults 18 to 35, single and married, from the Little Rock, North Little Rock and Searcy stakes."},
     {"slug": "christmas-devotional-2026-12-06", "date": "2026-12-06", "start": "190000", "end": "200000", "time": "7:00 PM",
      "title": "First Presidency's Christmas Devotional",
@@ -587,11 +587,31 @@ EVENTS = [
 BUILD_DATE = "2026-11-04"
 
 
+VTIMEZONE = ["BEGIN:VTIMEZONE", "TZID:America/Chicago",
+    "BEGIN:DAYLIGHT", "TZOFFSETFROM:-0600", "TZOFFSETTO:-0500", "TZNAME:CDT", "DTSTART:19700308T020000", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU", "END:DAYLIGHT",
+    "BEGIN:STANDARD", "TZOFFSETFROM:-0500", "TZOFFSETTO:-0600", "TZNAME:CST", "DTSTART:19701101T020000", "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU", "END:STANDARD",
+    "END:VTIMEZONE"]
+CLASS_GCAL = {"text": "Institute at Marc and Nikki's", "dates": "20261027T190000/20261027T200000", "location": "Benton, AR",
+              "details": "Little Rock Stake institute class. Bring scriptures or the Gospel Library app, and bring a friend.",
+              "recur": "RRULE:FREQ=WEEKLY;BYDAY=TU"}
+
+
+def gcal_url(fields):
+    from urllib.parse import urlencode
+    return "https://calendar.google.com/calendar/render?" + esc(urlencode({"action": "TEMPLATE", "ctz": "America/Chicago", **fields}))
+
+
+def cal_links(ics_href, fields, cls="ev-cal"):
+    # Google opens its own add-event page; Apple and Outlook open the .ics (no download attribute, so phones show "Add to Calendar")
+    return f"""<div class="{cls}"><span>Add to calendar:</span> <a href="{gcal_url(fields)}" target="_blank" rel="noopener">Google</a> <a href="{ics_href}">Apple or Outlook</a></div>"""
+
+
 def event_ics(e):
     loc = e["place"].replace(",", "\\,")
     day = e["date"].replace("-", "")
     return "\r\n".join([
         "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arkansas YSA Institute//Events//EN", "CALSCALE:GREGORIAN",
+        *VTIMEZONE,
         "BEGIN:VEVENT", f"UID:{e['slug']}@odyssey-jotun.github.io", "DTSTAMP:20261023T000000Z",
         f"DTSTART;TZID=America/Chicago:{day}T{e['start']}", f"DTEND;TZID=America/Chicago:{day}T{e['end']}",
         f"SUMMARY:{e['title']}", f"LOCATION:{loc}", f"DESCRIPTION:{e['note']}",
@@ -606,20 +626,21 @@ def events_section(heading_tag="h2"):
           <h3>Institute class</h3>
           <p class="ev-meta">{CLASS_TIME}, a home in Benton</p>
           <p>A lesson, food and games. Can't make the drive? Join on Zoom with the link in our GroupMe.</p>
-          <a class="ev-link" href="{ICS_FILE}" download>Add to calendar</a>
+          {cal_links(ICS_FILE, CLASS_GCAL)}
         </div>
       </li>"""]
     for e in EVENTS:
         if e["date"] < BUILD_DATE:
             continue
         d = dt.date.fromisoformat(e["date"])
+        day = e["date"].replace("-", "")
         rows.append(f"""<li class="event" data-date="{e['date']}">
         <div class="event-date" aria-hidden="true"><span class="ev-small">{d.strftime('%b')}</span><span class="ev-big">{d.day}</span><span class="ev-small">{d.strftime('%a')}</span></div>
         <div class="event-body">
           <h3>{esc(e['title'])}</h3>
           <p class="ev-meta"><time datetime="{e['date']}">{d.strftime('%A, %B')} {d.day}</time>, {e['time']} Central. {esc(e['place'])}</p>
           <p>{esc(e['note'])}</p>
-          <a class="ev-link" href="events/{e['slug']}.ics" download>Add to calendar</a>
+          {cal_links(f"events/{e['slug']}.ics", {"text": e["title"], "dates": f"{day}T{e['start']}/{day}T{e['end']}", "location": e["place"], "details": e["note"]})}
         </div>
       </li>""")
     return f"""<section id="events" aria-labelledby="events-title">
@@ -744,7 +765,7 @@ def little_rock():
       </div>
       {visit_media()}
     </div>
-    <div class="cta-row"><a class="btn" href="{ICS_FILE}" download>Add Tuesdays to your calendar</a></div>
+    <div class="cta-row"><p class="cal-title">Add Tuesdays to your calendar</p><div class="cal-btns"><a class="btn" href="{gcal_url(CLASS_GCAL)}" target="_blank" rel="noopener">Google Calendar</a><a class="btn btn-line" href="{ICS_FILE}">Apple or Outlook</a></div></div>
   </div>
 </section>
 
@@ -881,7 +902,7 @@ def events_page():
     nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
     out = head(
         "Upcoming Events for Young Adults in Central Arkansas | Arkansas YSA Institute",
-        "Institute every Tuesday at 7 PM in Benton, the Nov. 21 young adult devotional with Elder David A. Bednar, "
+        "Institute every Tuesday at 7 PM in Benton, the Nov. 21 young adult devotional with Elder Eric Bednar, "
         "and other events for young adults 18 to 35 in the Little Rock Stake.",
         "events.html", "ysa-home", nav, body_class="warm",
     )
