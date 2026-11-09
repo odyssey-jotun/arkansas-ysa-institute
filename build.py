@@ -144,9 +144,8 @@ FAQ_INSTITUTE = [
      "organized where enough of them live. Your bishop or branch president can tell you which unit your address "
      "belongs to, and institute is open to you either way.</p>"),
     ("Which ward or branch do I attend?",  # lds ysa ward near me 150; ysa ward near me 150
-     f"<p>Your home address decides it. The <a href=\"index.html#stakes\">stake tabs on the home page</a> list all "
-     f"{UNIT_COUNT} wards and branches in the two stakes. The meetinghouse locator on "
-     "the Church's website shows exact boundaries.</p>"),
+     "<p>Your home address decides it. The meetinghouse locator on the Church's website shows exact boundaries, "
+     "and institute is open to you whichever ward you attend.</p>"),
 ]
 
 FAQ_CHURCH = [
@@ -200,8 +199,7 @@ FAQ_CHURCH = [
     ("Where does the Church of Jesus Christ meet near me in central Arkansas?",  # lds church near me 78,000; mormon church near me 55,000
      f"<p>The two stakes have {UNIT_COUNT} wards and branches meeting in Little Rock, North Little Rock, Conway, "
      "Quitman, Morrilton, Russellville, Danville, Hot Springs, Pine Bluff, Malvern, Arkadelphia, Glenwood, Hope, "
-     "Camden and Monticello. Sunday services are open to everyone. The "
-     "<a href=\"index.html#stakes\">stake tabs on the home page</a> list each one.</p>"),
+     "Camden and Monticello. Sunday services are open to everyone.</p>"),
 ]
 
 FAQ_TEASER = [FAQ_INSTITUTE[2], FAQ_INSTITUTE[3], FAQ_INSTITUTE[4], FAQ_INSTITUTE[6]]
@@ -338,14 +336,6 @@ def picture(name, alt, widths, sizes, w, h, eager=False):
             f'width="{w}" height="{h}" alt="{esc(alt)}" {load}>')
 
 
-def unit_list(units):
-    return '<ul class="unit-list">' + "".join(
-        f'<li class="unit"><span class="unit-name">{esc(n)}</span>'
-        f'<span class="unit-addr">Meets in {esc(a.rsplit(", ", 1)[-1])}</span></li>'
-        for n, t, a in units
-    ) + "</ul>"
-
-
 def stake_tabs():
     tabs, panels = [], []
     for i, s in enumerate(STAKES):
@@ -366,11 +356,7 @@ def stake_tabs():
       <h3>{s['class_title']}</h3>
       <ul class="class-facts">{facts}</ul>
       <p>{esc(s['class_note'])}</p>
-      {buttons}
-    </div>
-    <div>
-      <div class="dir-head"><h3>Wards and branches</h3><span>{len(s['units'])} units</span></div>
-      {unit_list(s['units'])}
+      <div class="card-cta">{buttons}</div>
     </div>
   </div>
 </div>""")
@@ -490,7 +476,7 @@ def index():
     out = head(
         "Institute Classes in Little Rock and North Little Rock | Arkansas YSA Institute",
         "Free weekly institute classes for young adults 18 to 35 in the Little Rock and North Little Rock stakes. "
-        "Class time and address, every ward and branch, and how to register on myInstitute.",
+        "Class times, the Tuesday class in Benton, and how to register on myInstitute.",
         "index.html", "hero", nav, ld_script(ld),
     )
     out += f"""<main id="main">
@@ -511,11 +497,10 @@ def index():
 <section id="stakes" class="band" aria-labelledby="stakes-title">
   <div class="wrap">
     <div class="section-head">
-      <h2 id="stakes-title">Institute and wards in both central Arkansas stakes</h2>
-      <p class="lead">{UNIT_COUNT} wards and branches make up the two stakes, from Danville and Russellville down to Hope and Monticello. Each tab shows the stake's institute class and every ward and branch in it.</p>
+      <h2 id="stakes-title">Institute in both central Arkansas stakes</h2>
+      <p class="lead">{UNIT_COUNT} wards and branches make up the two stakes, from Danville and Russellville down to Hope and Monticello. Each tab shows the stake's institute class.</p>
     </div>
     {stake_tabs()}
-    <p class="dir-note center">Not sure which unit is yours? The meetinghouse locator on the Church's website shows each boundary.</p>
   </div>
 </section>
 
@@ -806,18 +791,6 @@ def little_rock():
   </div>
 </section>
 
-<section id="wards" class="band" aria-labelledby="wards-title">
-  <div class="wrap">
-    <div class="section-head">
-      <h2 id="wards-title">Every ward and branch in the stake is welcome</h2>
-      <p class="lead">Institute is open to young adults from all eleven.</p>
-    </div>
-    <div class="ward-panel">
-      {unit_list(LR_UNITS)}
-    </div>
-    <p class="dir-note center">Live north of the river? See the <a href="index.html#north-little-rock-stake">North Little Rock Stake</a>.</p>
-  </div>
-</section>
 
 {faq_teaser([FAQ_WHEN] + FAQ_TEASER).replace('Questions young adults ask first', 'Questions people ask before their first Tuesday')}"""
     out += foot("#visit", heading="We'll save you a seat", label="Plan your first Tuesday")
