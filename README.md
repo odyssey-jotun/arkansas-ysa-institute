@@ -1,4 +1,4 @@
-# Arkansas YSA Institute (mock)
+# Central Arkansas Young Adults (mock)
 
 Mock site for the Institute of Religion class serving young adults in the Little Rock Arkansas Stake and the North Little Rock Arkansas Stake. Independent site, not owned or sponsored by The Church of Jesus Christ of Latter-day Saints.
 

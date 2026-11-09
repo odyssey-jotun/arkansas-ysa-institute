@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Arkansas YSA Institute//Events//EN
+PRODID:-//Central Arkansas Young Adults//Events//EN
 CALSCALE:GREGORIAN
 BEGIN:VTIMEZONE
 TZID:America/Chicago

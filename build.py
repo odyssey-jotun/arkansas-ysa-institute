@@ -12,7 +12,7 @@ import re
 
 ROOT = pathlib.Path(__file__).parent
 SITE = "https://odyssey-jotun.github.io/arkansas-ysa-institute/"
-NAME = "Arkansas YSA Institute"
+NAME = "Central Arkansas Young Adults"
 
 # Where and when the Little Rock Stake class meets.
 ADDRESS = {"city": "Benton", "state": "AR"}
@@ -23,56 +23,40 @@ GROUPME = "https://groupme.com/join_group/104089376/JdmKvg4Y"
 CLASS_TIME = "Tuesdays at 7:00 PM"
 CLASS_TIME_PHRASE = "on Tuesdays at 7:00 PM"
 
-STAKES = [
+# The three places young adults meet. Conway and Cabot details fill in as their teachers send them.
+LOCATIONS = [
     {
-        "id": "little-rock-stake",
-        "name": "Little Rock Stake",
-        "sub": "Little Rock, Benton, Hot Springs and south Arkansas",
-        "class_title": "Little Rock Stake institute",
+        "id": "benton",
+        "name": "Benton",
+        "sub": "Little Rock Stake",
+        "class_title": "Benton institute class",
         "facts": [("clock", CLASS_TIME), ("pin", "A home in Benton")],
         "class_note": "The class meets in a home in Benton and is open to young single and married adults ages 18 to 35, and to their friends.",
         "page": "little-rock.html",
-        "units": [
-            ("Little Rock Ward", "11:30 AM", "13901 Quail Run Drive, Little Rock"),
-            ("Benton Ward", "9:00 AM", "13901 Quail Run Drive, Little Rock"),
-            ("Pinnacle Mountain Ward", "10:00 AM", "600 South Rodney Parham Road, Little Rock"),
-            ("Hot Springs Ward", "10:00 AM", "2765 Malvern Avenue, Hot Springs"),
-            ("Pine Bluff Ward", "10:00 AM", "2501 Ridgway Road, Pine Bluff"),
-            ("Arkadelphia Branch", "10:00 AM", "2601 Twin Rivers Drive, Arkadelphia"),
-            ("Camden Branch", "10:00 AM", "859 Lakewood Road, Camden"),
-            ("Glenwood Branch", "10:00 AM", "1466 Highway 70 West, Glenwood"),
-            ("Hope Branch", "10:00 AM", "3069 Highway 29 North, Hope"),
-            ("Malvern Branch", "1:00 PM", "519 Fairview Street, Malvern"),
-            ("Monticello Branch", "9:30 AM", "519 Glenwood Drive, Monticello"),
-        ],
     },
     {
-        "id": "north-little-rock-stake",
-        "name": "North Little Rock Stake",
-        "sub": "North Little Rock, Conway and the River Valley",
-        "class_title": "North Little Rock Stake institute",
+        "id": "conway",
+        "name": "Conway",
+        "sub": "North Little Rock Stake",
+        "class_title": "Conway institute class",
+        "facts": [("clock", "Class night posting soon"), ("pin", "Conway")],
+        "class_note": f"Until the Conway schedule posts, you're welcome at the Benton class {CLASS_TIME_PHRASE}.",
+        "page": None,
+    },
+    {
+        "id": "cabot",
+        "name": "Cabot",
+        "sub": "Searcy Stake",
+        "class_title": "Cabot institute class",
         "facts": [
             ("clock", "Class night posting soon"),
-            ("pin", "North Little Rock Arkansas Stake Center, 905 Kierre Drive, North Little Rock"),
+            ("pin", "Cabot"),
+            ("calendar", "Searcy Stake young adults also share a monthly break-the-fast meal and a monthly Saturday activity"),
         ],
-        "class_note": (
-            f"Until the schedule posts, young adults from either stake are welcome at the Little Rock Stake "
-            f"class {CLASS_TIME_PHRASE} in Benton."
-        ),
+        "class_note": f"Until the Cabot schedule posts, you're welcome at the Benton class {CLASS_TIME_PHRASE}.",
         "page": None,
-        "units": [
-            ("North Little Rock Ward", "10:00 AM", "905 Kierre Drive, North Little Rock"),
-            ("Conway 1st Ward", "11:30 AM", "2045 Dave Ward Drive, Conway"),
-            ("Conway 2nd Ward", "9:00 AM", "2045 Dave Ward Drive, Conway"),
-            ("Greenbrier Ward", "9:00 AM", "6556 Heber Springs Road West, Quitman"),
-            ("Morrilton Ward", "10:00 AM", "1101 Burrow Street, Morrilton"),
-            ("Russellville Ward", "10:00 AM", "200 South Cumberland Avenue, Russellville"),
-            ("Danville Branch", "10:00 AM", "13842 North State Highway 27, Danville"),
-        ],
     },
 ]
-UNIT_COUNT = sum(len(s["units"]) for s in STAKES)
-LR_UNITS = STAKES[0]["units"]
 
 ICONS = {
     "book": '<path d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1z"/><path d="M12 6.5V20"/>',
@@ -100,15 +84,15 @@ def esc(s):
 
 # FAQ: (question, answer HTML). Keyword notes: volumes are Ahrefs US monthly searches, 2026-10-23.
 FAQ_WHEN = (
-    "When and where does the Little Rock Stake institute class meet?",
-    f"<p>{CLASS_TIME} in a home in Benton. {ADDRESS_NOTE} The North Little Rock Stake schedule will appear on its "
-    "stake tab when it is set.</p>",
+    "When and where do institute classes meet?",
+    f"<p>The Benton class meets {CLASS_TIME_PHRASE} in a home in Benton. {ADDRESS_NOTE} The Conway and Cabot "
+    "schedules will appear on their tabs when they are set.</p>",
 )
 FAQ_INSTITUTE = [
     ("What is institute?",  # institute lds 1,100; lds institute 700; what is institute lds 30
      "<p>Institute of Religion is the weekly religion class that The Church of Jesus Christ of Latter-day Saints "
      "offers young adults. Classes study the scriptures and the teachings of living prophets, and they meet in "
-     "meetinghouses, campus buildings and homes. Many people search for it as LDS institute or myInstitute.</p>"),
+     "meetinghouses, campus buildings and homes. Registration runs through myInstitute.</p>"),
     FAQ_WHEN,
     ("Who can attend institute?",  # lds institute classes for adults 50
      "<p>Anyone ages 18 to 35. Young single adults are the heart of the class, and married young adults are welcome. "
@@ -197,9 +181,10 @@ FAQ_CHURCH = [
      "attend Sunday services at a meetinghouse. Temples are reserved for ordinances such as eternal marriage, for "
      "members who hold a temple recommend.</p>"),
     ("Where does the Church of Jesus Christ meet near me in central Arkansas?",  # lds church near me 78,000; mormon church near me 55,000
-     f"<p>The two stakes have {UNIT_COUNT} wards and branches meeting in Little Rock, North Little Rock, Conway, "
-     "Quitman, Morrilton, Russellville, Danville, Hot Springs, Pine Bluff, Malvern, Arkadelphia, Glenwood, Hope, "
-     "Camden and Monticello. Sunday services are open to everyone.</p>"),
+     "<p>The Little Rock, North Little Rock and Searcy stakes have wards and branches meeting in Little Rock, North "
+     "Little Rock, Conway, Cabot, Searcy, Jacksonville, Batesville, Quitman, Morrilton, Russellville, Danville, Hot "
+     "Springs, Pine Bluff, Malvern, Arkadelphia, Glenwood, Hope, Camden and Monticello. Sunday services are open to "
+     "everyone.</p>"),
 ]
 
 FAQ_TEASER = [FAQ_INSTITUTE[2], FAQ_INSTITUTE[3], FAQ_INSTITUTE[4], FAQ_INSTITUTE[6]]
@@ -279,12 +264,12 @@ def foot(cta_href, heading="Bring a friend to institute this Tuesday", label="Pl
   <div class="wrap foot-grid">
     <div>
       <p class="foot-name">{NAME}</p>
-      <p>Little Rock Stake class<br>{CLASS_TIME} in Benton, Arkansas</p>
-      <p style="margin-top:14px">An independent site for young adults in the Little Rock Arkansas Stake and the North Little Rock Arkansas Stake. It is not owned or sponsored by The Church of Jesus Christ of Latter-day Saints.</p>
+      <p>Institute in Benton, Conway and Cabot<br>Benton class: {CLASS_TIME}</p>
+      <p style="margin-top:14px">An independent site for young adults in the Little Rock, North Little Rock and Searcy Arkansas stakes. It is not owned or sponsored by The Church of Jesus Christ of Latter-day Saints.</p>
     </div>
     <ul class="foot-links">
-      <li><a href="index.html#stakes">Stakes and wards</a></li>
-      <li><a href="little-rock.html">Little Rock Stake class</a></li>
+      <li><a href="index.html#stakes">Benton, Conway and Cabot</a></li>
+      <li><a href="little-rock.html">Benton class</a></li>
       <li><a href="events.html">Upcoming events</a></li>
       <li><a href="faq.html">FAQ</a></li>
       <li><a href="new-to-the-church.html">New to the Church?</a></li>
@@ -336,9 +321,9 @@ def picture(name, alt, widths, sizes, w, h, eager=False):
             f'width="{w}" height="{h}" alt="{esc(alt)}" {load}>')
 
 
-def stake_tabs():
+def location_tabs():
     tabs, panels = [], []
-    for i, s in enumerate(STAKES):
+    for i, s in enumerate(LOCATIONS):
         tabs.append(
             f'<button class="tab" role="tab" id="tab-{s["id"]}" aria-controls="panel-{s["id"]}" '
             f'aria-selected="{"true" if i == 0 else "false"}" data-hash="{s["id"]}">'
@@ -346,7 +331,7 @@ def stake_tabs():
         )
         facts = "".join(f"<li>{icon(k, 22)}<span>{esc(v)}</span></li>" for k, v in s["facts"])
         if s["page"]:
-            buttons = (f'<a class="btn btn-cream" href="{s["page"]}">See the Little Rock class</a>'
+            buttons = (f'<a class="btn btn-cream" href="{s["page"]}">See the {s["name"]} class</a>'
                        '<p class="card-link"><a href="#register">How to register</a></p>')
         else:
             buttons = '<a class="btn btn-cream" href="#register">How to register</a>'
@@ -360,7 +345,7 @@ def stake_tabs():
     </div>
   </div>
 </div>""")
-    return (f'<div class="tabs"><div class="tablist" role="tablist" aria-label="Stakes">{"".join(tabs)}</div>'
+    return (f'<div class="tabs"><div class="tablist" role="tablist" aria-label="Locations">{"".join(tabs)}</div>'
             + "\n".join(panels) + "</div>")
 
 
@@ -421,7 +406,7 @@ def success_block():
         <h2 id="success-title">Tuesday nights with people who share your faith</h2>
         <p>A year of institute in central Arkansas adds up to:</p>
         <ul class="icon-list">
-          <li><span class="icon">{icon('people', 22)}</span><span>Friends from Little Rock to Hot Springs who know your name</span></li>
+          <li><span class="icon">{icon('people', 22)}</span><span>Friends from Cabot to Hot Springs who know your name</span></li>
           <li><span class="icon">{icon('book', 22)}</span><span>A scripture habit that outlasts the semester</span></li>
           <li><span class="icon">{icon('question', 22)}</span><span>Room to ask the questions you have been carrying around</span></li>
         </ul>
@@ -468,25 +453,25 @@ def index():
         "@type": "EducationalOrganization",
         "name": NAME,
         "url": SITE,
-        "description": "Weekly Institute of Religion classes for young adults ages 18 to 35 in the Little Rock and North Little Rock stakes.",
+        "description": "Weekly Institute of Religion classes for young adults ages 18 to 35 in Benton, Conway and Cabot.",
         "address": POSTAL,
-        "areaServed": ["Little Rock, AR", "North Little Rock, AR", "Conway, AR", "Benton, AR", "Hot Springs, AR"],
+        "areaServed": ["Benton, AR", "Conway, AR", "Cabot, AR", "Little Rock, AR", "North Little Rock, AR", "Searcy, AR"],
     }
-    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
     out = head(
-        "Institute Classes in Little Rock and North Little Rock | Arkansas YSA Institute",
-        "Free weekly institute classes for young adults 18 to 35 in the Little Rock and North Little Rock stakes. "
+        "Institute Classes in Benton, Conway and Cabot | Central Arkansas Young Adults",
+        "Free weekly institute classes for young adults 18 to 35 in Benton, Conway and Cabot. "
         "Class times, the Tuesday class in Benton, and how to register on myInstitute.",
         "index.html", "hero", nav, ld_script(ld),
     )
     out += f"""<main id="main">
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap narrow">
-    <h1 id="hero-title">Institute classes for young adults in Little Rock and North Little Rock</h1>
+    <h1 id="hero-title">Institute classes for young adults in Benton, Conway and Cabot</h1>
     <p class="lead">Free weekly gospel study for anyone 18 to 35 in central Arkansas, single or married, members of The Church of Jesus Christ of Latter-day Saints and friends of other faiths alike.</p>
     <div class="cta-row">
       <a class="btn" href="#stakes">Find your class</a>
-      <p class="small">Little Rock Stake class: {CLASS_TIME} in Benton</p>
+      <p class="small">Benton class: {CLASS_TIME}</p>
     </div>
   </div>
   <div class="hero-photo">
@@ -497,10 +482,10 @@ def index():
 <section id="stakes" class="band" aria-labelledby="stakes-title">
   <div class="wrap">
     <div class="section-head">
-      <h2 id="stakes-title">Institute in both central Arkansas stakes</h2>
-      <p class="lead">{UNIT_COUNT} wards and branches make up the two stakes, from Danville and Russellville down to Hope and Monticello. Each tab shows the stake's institute class.</p>
+      <h2 id="stakes-title">Three places to meet in central Arkansas</h2>
+      <p class="lead">Young adults from the Little Rock, North Little Rock and Searcy stakes meet in Benton, Conway and Cabot. Each tab shows that town's class and activities.</p>
     </div>
-    {stake_tabs()}
+    {location_tabs()}
   </div>
 </section>
 
@@ -510,7 +495,7 @@ def index():
       <h2 id="problem-title">Being a young single adult in Arkansas can be lonely</h2>
       <p class="lead">Utah has a YSA ward on every other corner. Central Arkansas has long drives and small congregations.</p>
     </div>
-    <div class="cards">{problem_cards(f"Spread across {UNIT_COUNT} congregations", "Young adults in the two stakes are scattered over a couple hundred miles of highway, and many wards and branches have only a handful of them.")}
+    <div class="cards">{problem_cards("Spread across three stakes", "Young adults in central Arkansas are scattered over a couple hundred miles of highway, and many wards and branches have only a handful of them.")}
     </div>
   </div>
 </section>
@@ -524,7 +509,7 @@ def index():
       <div>
         <h2 id="classes-title">A weekly class made for the years between 18 and 35</h2>
         <p>Institute began in 1926 in Moscow, Idaho, for college students who wanted their faith to keep pace with their schooling. Today the Church's Seminaries and Institutes of Religion holds classes in nearly 2,700 locations, from campus buildings to living rooms.</p>
-        <p>Classes lean on discussion, and teachers are local members called by the stake. The Little Rock Stake class meets on Tuesday nights in a home in Benton.</p>
+        <p>Classes lean on discussion, and teachers are local members called by the stake. The Benton class meets on Tuesday nights in a home.</p>
         <div class="facts-row">
           <div class="fact"><strong>18 to 35</strong><span>single or married</span></div>
           <div class="fact"><strong>$0</strong><span>for every course</span></div>
@@ -542,8 +527,8 @@ def index():
       <h2 id="register-title">Join a class in three steps</h2>
       <p class="lead">Members and friends of other faiths sign up the same way, and you can visit a class before you register.</p>
     </div>
-    {register_steps(("Pick your stake", 'Open the <a href="#stakes">stake tabs</a> and find the class nearest where you live, work or study.'), ("Come Tuesday night", f"Bring scriptures or the Gospel Library app to the class in Benton {CLASS_TIME_PHRASE}."))}
-    <div class="cta-row"><a class="btn" href="little-rock.html">See the Little Rock class</a></div>
+    {register_steps(("Pick your class", 'Open the <a href="#stakes">location tabs</a> and find the class nearest where you live, work or study.'), ("Come Tuesday night", f"Bring scriptures or the Gospel Library app to the class in Benton {CLASS_TIME_PHRASE}."))}
+    <div class="cta-row"><a class="btn" href="little-rock.html">See the Benton class</a></div>
     {credit_block()}
   </div>
 </section>
@@ -595,7 +580,7 @@ def event_ics(e):
     loc = e["place"].replace(",", "\\,")
     day = e["date"].replace("-", "")
     return "\r\n".join([
-        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arkansas YSA Institute//Events//EN", "CALSCALE:GREGORIAN",
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Central Arkansas Young Adults//Events//EN", "CALSCALE:GREGORIAN",
         *VTIMEZONE,
         "BEGIN:VEVENT", f"UID:{e['slug']}@odyssey-jotun.github.io", "DTSTAMP:20261023T000000Z",
         f"DTSTART;TZID=America/Chicago:{day}T{e['start']}", f"DTEND;TZID=America/Chicago:{day}T{e['end']}",
@@ -647,7 +632,7 @@ def events_section(heading_tag="h2"):
 def ics():
     loc = "Benton\\, AR"
     return "\r\n".join([
-        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arkansas YSA Institute//Little Rock Stake//EN", "CALSCALE:GREGORIAN",
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Central Arkansas Young Adults//Little Rock Stake//EN", "CALSCALE:GREGORIAN",
         "BEGIN:VTIMEZONE", "TZID:America/Chicago",
         "BEGIN:DAYLIGHT", "TZOFFSETFROM:-0600", "TZOFFSETTO:-0500", "TZNAME:CDT", "DTSTART:19700308T020000", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU", "END:DAYLIGHT",
         "BEGIN:STANDARD", "TZOFFSETFROM:-0500", "TZOFFSETTO:-0600", "TZNAME:CST", "DTSTART:19701101T020000", "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU", "END:STANDARD",
@@ -661,8 +646,9 @@ def ics():
 
 
 def visit_media():
-    return f"""<div class="sign-wrap"><p class="address-big">A home in Benton</p>
-        <a class="btn" href="{GROUPME}">Join the GroupMe</a></div>"""
+    return f"""<div class="photo tall">
+        {picture('gather', 'Friends laughing while they make pizza together at a kitchen counter', [800, 1200], '(max-width: 820px) 100vw, 540px', 1200, 1500)}
+      </div>"""
 
 
 def little_rock():
@@ -678,7 +664,7 @@ def little_rock():
     nav = [("Where we meet", "little-rock.html#visit"), ("Events", "events.html"), ("First Tuesday", "little-rock.html#first-tuesday"), ("FAQ", "faq.html")]
     extra = (ld_script(ld) + '\n<link rel="preload" href="fonts/caveat-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>')
     out = head(
-        "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Arkansas YSA Institute",
+        "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Central Arkansas Young Adults",
         f"Institute for young adults 18 to 35 in the Little Rock Arkansas Stake, {CLASS_TIME} at Marc and Nikki's home, "
         "Benton. Free, friends welcome.",
         "little-rock.html", "ysa-home", nav, extra, body_class="warm",
@@ -809,18 +795,18 @@ def faq_ld(items):
 
 
 def faq():
-    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
     out = head(
-        "Institute FAQ: Classes, myInstitute and YSA Wards | Arkansas YSA Institute",
+        "Institute FAQ: Classes, myInstitute and YSA Wards | Central Arkansas Young Adults",
         "Answers about institute classes, myInstitute registration, credit and YSA wards for young adults in the "
-        "Little Rock and North Little Rock stakes.",
+        "Little Rock, North Little Rock and Searcy stakes.",
         "faq.html", "faq", nav, ld_script(faq_ld(FAQ_INSTITUTE)),
     )
     out += f"""<main id="main">
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap narrow">
     <h1 id="hero-title">Questions about institute in central Arkansas</h1>
-    <p class="lead">Class times, registration, credit and which ward is yours, for young adults in the Little Rock and North Little Rock stakes.</p>
+    <p class="lead">Class times, registration, credit and which ward is yours, for young adults in Benton, Conway and Cabot.</p>
   </div>
   <div class="hero-photo">
     {picture('faq', 'Three young adults talking and smiling outside a building', [800, 1400], '(max-width: 1180px) 100vw, 1180px', 1400, 933, eager=True)}
@@ -841,9 +827,9 @@ def faq():
 
 
 def church_faq():
-    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
     out = head(
-        "New to the Church of Jesus Christ? Common Questions | Arkansas YSA Institute",
+        "New to the Church of Jesus Christ? Common Questions | Central Arkansas Young Adults",
         "Plain answers to common questions about Latter-day Saints: beliefs about Jesus Christ, the Book of Mormon, "
         "coffee and the Word of Wisdom, temples and where the Church meets in central Arkansas.",
         "new-to-the-church.html", "faq", nav, ld_script(faq_ld(FAQ_CHURCH)),
@@ -872,9 +858,9 @@ def church_faq():
 
 
 def events_page():
-    nav = [("Stakes", "index.html#stakes"), ("Little Rock class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
     out = head(
-        "Upcoming Events for Young Adults in Central Arkansas | Arkansas YSA Institute",
+        "Upcoming Events for Young Adults in Central Arkansas | Central Arkansas Young Adults",
         "Institute every Tuesday at 7 PM in Benton, the Nov. 21 young adult devotional with Elder Eric Bednar, "
         "and other events for young adults 18 to 35 in the Little Rock Stake.",
         "events.html", "ysa-home", nav, body_class="warm",

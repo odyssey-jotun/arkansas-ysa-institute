@@ -93,7 +93,7 @@ section{padding:var(--section) 0}
 
 /* stake tabs */
 .tabs{max-width:1040px;margin:0 auto}
-.tablist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tablist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .tab{appearance:none;font:inherit;text-align:left;cursor:pointer;background:transparent;border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;padding:16px 20px 14px;color:var(--muted);border-top:4px solid transparent;transition:background-color .2s,color .2s}
 .tab:hover{background:rgba(255,253,248,.6);color:var(--ink)}
 .tab[aria-selected="true"]{background:var(--card);color:var(--ink);border-top-color:var(--pine)}
