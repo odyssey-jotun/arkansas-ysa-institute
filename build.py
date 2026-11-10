@@ -561,8 +561,8 @@ VTIMEZONE = ["BEGIN:VTIMEZONE", "TZID:America/Chicago",
     "BEGIN:DAYLIGHT", "TZOFFSETFROM:-0600", "TZOFFSETTO:-0500", "TZNAME:CDT", "DTSTART:19700308T020000", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU", "END:DAYLIGHT",
     "BEGIN:STANDARD", "TZOFFSETFROM:-0500", "TZOFFSETTO:-0600", "TZNAME:CST", "DTSTART:19701101T020000", "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU", "END:STANDARD",
     "END:VTIMEZONE"]
-CLASS_GCAL = {"text": "Institute at Marc and Nikki's", "dates": "20261027T190000/20261027T200000", "location": "Join GroupMe",
-              "details": f"Little Rock Stake institute class. Bring scriptures or the Gospel Library app, and bring a friend. Join the GroupMe for the address: {GROUPME}",
+CLASS_GCAL = {"text": "Institute at Marc and Nikki's", "dates": "20261027T190000/20261027T200000", "location": "Benton, AR",
+              "details": f"Little Rock Stake institute class. Bring scriptures or the Gospel Library app, and bring a friend. Join GroupMe for the address: {GROUPME}",
               "recur": "RRULE:FREQ=WEEKLY;BYDAY=TU"}
 
 
@@ -630,7 +630,7 @@ def events_section(heading_tag="h2"):
 
 
 def ics():
-    loc = "Join GroupMe"
+    loc = "Benton\\, AR"
     return "\r\n".join([
         "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Central Arkansas Young Adults//Little Rock Stake//EN", "CALSCALE:GREGORIAN",
         "BEGIN:VTIMEZONE", "TZID:America/Chicago",
@@ -641,7 +641,7 @@ def ics():
         "DTSTART;TZID=America/Chicago:20261027T190000", "DTEND;TZID=America/Chicago:20261027T200000",
         "RRULE:FREQ=WEEKLY;BYDAY=TU",
         "SUMMARY:Institute at Marc and Nikki's", f"LOCATION:{loc}",
-        f"DESCRIPTION:Little Rock Stake institute class. Bring scriptures or the Gospel Library app\\, and bring a friend. Join the GroupMe for the address: {GROUPME}",
+        f"DESCRIPTION:Little Rock Stake institute class. Bring scriptures or the Gospel Library app\\, and bring a friend. Join GroupMe for the address: {GROUPME}",
         "END:VEVENT", "END:VCALENDAR", ""])
 
 
