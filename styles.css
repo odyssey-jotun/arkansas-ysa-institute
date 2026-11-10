@@ -292,40 +292,23 @@ body.warm{
 .ev-where svg{flex:none}
 .ev-empty{text-align:center;color:var(--muted);max-width:860px;margin:0 auto}
 
-/* coming soon: the temple */
+/* coming soon: the temple, drawn in the same line style as the icons */
 .soon{padding:clamp(32px,6vw,64px) 0 var(--section)}
-.soon h1{margin-top:clamp(20px,4vw,36px)}
+.soon h1{margin-top:clamp(16px,3vw,28px)}
 .soon .lead{max-width:34em;margin-left:auto;margin-right:auto}
 .soon-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:28px}
 @media (max-width:520px){.soon-btns{flex-direction:column}.soon-btns .btn{width:100%}}
-.temple-art{display:block;width:min(100%,620px);height:auto;margin:0 auto;border-radius:28px;box-shadow:0 18px 40px -24px rgba(23,50,38,.45);cursor:pointer}
-.temple-art .t-lawn{fill:#6F8F5A;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .7s cubic-bezier(.25,1,.5,1)}
-.temple-art .t-walk{fill:#E3D6BC;opacity:0;transition:opacity .6s ease .3s}
-.temple-art .t-trunk{fill:#6B4E3A}
-.temple-art .t-leaf{fill:#4F7A4A}
-.temple-art .t-tree{transform-box:fill-box;transform-origin:50% 100%;transform:scale(0);transition:transform .8s cubic-bezier(.3,1.4,.5,1) .3s}
-.temple-art .t-step{fill:#D9CFBC;opacity:0;transform:translateY(10px);transition:transform .5s cubic-bezier(.25,1,.5,1),opacity .4s ease}
-.temple-art .t-step + .t-step{transition-delay:.15s}
-.temple-art .t-stone{fill:url(#t-stone);stroke:#CFC4AE;stroke-width:1}
-.temple-art .t-trim{fill:#EFE7D6;stroke:#CFC4AE;stroke-width:1}
-.temple-art .t-door{fill:#8A6A45}
-.temple-art .t-win{fill:#7D8C96;transition:fill .6s ease;transition-delay:calc(var(--i) * 160ms)}
-.temple-art .t-walls,.temple-art .t-tower{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .9s cubic-bezier(.25,1,.5,1)}
-.temple-art .t-spire{fill:url(#t-stone);stroke:#CFC4AE;stroke-width:1;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .7s cubic-bezier(.25,1,.5,1)}
-.temple-art .t-gold{fill:#D4A73A;opacity:0;transform:translateY(-8px);transition:transform .6s cubic-bezier(.3,1.4,.5,1),opacity .4s ease}
-.temple-art .t-gold .t-trumpet{fill:none;stroke:#D4A73A;stroke-width:1.6;stroke-linecap:round}
-.temple-art .t-sky-dusk{opacity:0;transition:opacity 1.6s ease}
-.temple-art .t-halo{opacity:0;transition:opacity 1.6s ease .4s}
-.temple-art .t-star{fill:#FFF6DC;opacity:0;transition:opacity .8s ease;transition-delay:calc(.6s + var(--i) * 120ms)}
-.temple-art.s-ground .t-lawn{transform:scaleY(1)}
-.temple-art.s-ground .t-walk{opacity:1}
-.temple-art.s-ground .t-tree{transform:scale(1)}
-.temple-art.s-steps .t-step{opacity:1;transform:none}
-.temple-art.s-walls .t-walls{transform:scaleY(1)}
-.temple-art.s-tower .t-tower{transform:scaleY(1)}
-.temple-art.s-spire .t-spire{transform:scaleY(1)}
-.temple-art.s-gold .t-gold{opacity:1;transform:none}
-.temple-art.s-dusk .t-sky-dusk,.temple-art.s-dusk .t-halo{opacity:1}
-.temple-art.s-dusk .t-star{opacity:.9;animation:twinkle 3.2s ease-in-out infinite;animation-delay:calc(var(--i) * -.45s)}
-.temple-art.s-lights .t-win{fill:#FFD98A}
-@keyframes twinkle{50%{opacity:.35}}
+.temple-art{display:block;width:min(100%,560px);height:auto;margin:0 auto;overflow:visible;cursor:pointer}
+.temple-art .ln{fill:none;stroke:var(--pine);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1;stroke-dashoffset:1;visibility:hidden}
+.temple-art .mass{fill:var(--paper);opacity:0}
+.temple-art.go .mass{opacity:1;transition:opacity .5s ease var(--m)}
+.temple-art .ln-sun{stroke:var(--brass);stroke-width:2}
+.temple-art .win{fill:var(--brass);fill-opacity:0}
+.temple-art .gold{fill:var(--brass);opacity:0}
+.temple-art .gold .trumpet{fill:none;stroke:var(--brass);stroke-width:1.6;stroke-linecap:round}
+.temple-art.go .ln{stroke-dashoffset:0;visibility:visible;transition:stroke-dashoffset var(--t) cubic-bezier(.45,0,.2,1) var(--d),visibility 0s linear var(--d)}
+.temple-art.go .win{fill-opacity:.32;transition:stroke-dashoffset var(--t) cubic-bezier(.45,0,.2,1) var(--d),visibility 0s linear var(--d),fill-opacity .9s ease var(--f)}
+.temple-art.go .gold{opacity:1;transition:opacity .7s ease 3.5s}
+.temple-art.go .ln-sun{animation:sun-glow 4s ease-in-out 4.5s infinite}
+.temple-art.out{opacity:0;transition:opacity .8s ease}
+@keyframes sun-glow{50%{stroke-width:3.2}}

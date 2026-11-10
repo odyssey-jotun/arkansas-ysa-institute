@@ -922,73 +922,62 @@ def events_page(loc=None):
     return out
 
 
-# Windows along the temple's two wings: x positions, lit one after another
-TEMPLE_WINDOWS = [150, 184, 218, 362, 396, 430]
-TEMPLE_STARS = [(70, 40, 1.6), (130, 78, 1.1), (205, 30, 1.3), (402, 44, 1.2), (470, 82, 1.6), (536, 36, 1.1), (560, 104, 1.3), (40, 112, 1.1)]
+# Line drawing of a single-spire temple in the site's icon style: (path, delay s, duration s), drawn in order
+TEMPLE_LINES = [
+    ("M150 262A150 150 0 0 1 450 262", 0, 1.2, "sun"),
+    ("M30 262H570", .2, .9, ""),
+    ("M120 262V254H480V262M132 254V247H468V254", .7, .6, ""),
+    ("M80 262V238M64 222a16 16 0 1 0 32 0a16 16 0 1 0-32 0M520 262V238M504 222a16 16 0 1 0 32 0a16 16 0 1 0-32 0", .8, .9, ""),
+    ("M142 247V190H136V183H258", 1.1, .7, ""),
+    ("M458 247V190H464V183H342", 1.1, .7, ""),
+    ("M258 247V140H252V133H348V140H342V247", 1.6, .8, ""),
+    ("M272 133V104H268V99H332V104H328V133", 2.2, .5, ""),
+    ("M283 99V80H317V99", 2.6, .4, ""),
+    ("M285 80 300 26 315 80", 2.9, .5, ""),
+    ("M287 247V222A13 13 0 0 1 313 222V247", 2.2, .5, ""),
+]
+TEMPLE_WINDOWS = [158, 189, 220, 362, 393, 424]
 
 
 def temple_art():
-    wins = "\n".join(
-        f'<path class="t-win" style="--i:{i}" d="M{x} 262v-26a9 9 0 0 1 18 0v26z"/>' for i, x in enumerate(TEMPLE_WINDOWS))
-    stars = "\n".join(
-        f'<circle class="t-star" style="--i:{i}" cx="{x}" cy="{y}" r="{r}"/>' for i, (x, y, r) in enumerate(TEMPLE_STARS))
-    return f"""<svg class="temple-art" viewBox="0 0 600 340" role="img" aria-label="A temple with a single spire takes shape: the lawn and steps appear, the walls and tower rise, a gold statue of an angel appears on top of the spire, then the evening sky darkens and the windows light up.">
-  <defs>
-    <linearGradient id="t-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE0E6"/><stop offset="1" stop-color="#F4EEDF"/></linearGradient>
-    <linearGradient id="t-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E2F45"/><stop offset=".65" stop-color="#5B4E6B"/><stop offset="1" stop-color="#E9B97A"/></linearGradient>
-    <linearGradient id="t-stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF8"/><stop offset="1" stop-color="#E8E0D0"/></linearGradient>
-    <radialGradient id="t-halo"><stop offset="0" stop-color="#FFE3A6" stop-opacity=".55"/><stop offset="1" stop-color="#FFE3A6" stop-opacity="0"/></radialGradient>
-    <clipPath id="t-frame"><rect width="600" height="340" rx="28"/></clipPath>
-  </defs>
-  <g clip-path="url(#t-frame)">
-    <rect class="t-sky" width="600" height="340" fill="url(#t-day)"/>
-    <rect class="t-sky-dusk" width="600" height="340" fill="url(#t-dusk)"/>
-    {stars}
-    <ellipse class="t-halo" cx="300" cy="200" rx="230" ry="150" fill="url(#t-halo)"/>
-    <path class="t-lawn" d="M0 290C120 276 480 276 600 290V340H0z"/>
-    <path class="t-walk" d="M286 340 292 300h16l6 40z"/>
-    <g class="t-tree" style="--x:62px"><rect x="58" y="252" width="8" height="34" rx="3" class="t-trunk"/><circle cx="62" cy="242" r="24" class="t-leaf"/></g>
-    <g class="t-tree" style="--x:538px"><rect x="534" y="252" width="8" height="34" rx="3" class="t-trunk"/><circle cx="538" cy="242" r="24" class="t-leaf"/></g>
-    <rect class="t-step" x="120" y="288" width="360" height="10" rx="2"/>
-    <rect class="t-step" x="132" y="280" width="336" height="10" rx="2"/>
-    <g class="t-walls">
-      <rect class="t-stone" x="138" y="214" width="324" height="68" rx="2"/>
-      <rect class="t-trim" x="132" y="208" width="336" height="8" rx="2"/>
-      {wins}
-    </g>
-    <g class="t-tower">
-      <rect class="t-stone" x="258" y="150" width="84" height="132" rx="2"/>
-      <rect class="t-trim" x="252" y="144" width="96" height="8" rx="2"/>
-      <path class="t-door" d="M286 282v-30a14 14 0 0 1 28 0v30z"/>
-      <path class="t-win t-win-tall" style="--i:6" d="M292 222v-36a8 8 0 0 1 16 0v36z"/>
-      <rect class="t-stone" x="272" y="112" width="56" height="34" rx="2"/>
-      <rect class="t-trim" x="268" y="108" width="64" height="6" rx="2"/>
-      <rect class="t-stone" x="284" y="86" width="32" height="24" rx="2"/>
-    </g>
-    <path class="t-spire" d="M285 88 300 26 315 88z"/>
-    <g class="t-gold">
+    lines = "\n    ".join(
+        f'<path class="ln{" ln-sun" if kind else ""}" pathLength="1" style="--d:{d}s;--t:{t}s" d="{path}"/>'
+        for path, d, t, kind in TEMPLE_LINES)
+    wins = [f"M{x} 232V208A9 9 0 0 1 {x + 18} 208V232Z" for x in TEMPLE_WINDOWS]
+    wins += ["M293 200V172A7 7 0 0 1 307 172V200Z", "M294 118a6 6 0 1 0 12 0a6 6 0 1 0-12 0"]
+    windows = "\n    ".join(
+        f'<path class="ln win" pathLength="1" style="--d:{2.4 + i * .08:.2f}s;--t:.4s;--f:{3.6 + i * .12:.2f}s" d="{w}"/>'
+        for i, w in enumerate(wins))
+    sun, rest = lines.split("\n    ", 1)
+    # page-colored fills, each appearing as its part is drawn, so the sun reads as behind the building
+    masses = "\n    ".join(f'<path class="mass" style="--m:{m}s" d="{d}"/>' for d, m in [
+        ("M120 247H480V262H120Z", .7), ("M136 183H464V254H136Z", 1.1), ("M252 133H348V247H252Z", 1.6),
+        ("M268 99H332V133H268Z", 2.2), ("M283 80H317V99H283Z", 2.6), ("M285 80 300 26 315 80Z", 2.9)])
+    return f"""<svg class="temple-art" viewBox="0 0 600 272" role="img" aria-label="A line drawing of a temple with a single spire draws itself in front of a rising sun, a gold angel appears on top of the spire, and the windows glow.">
+    {sun}
+    {masses}
+    {rest}
+    {windows}
+    <g class="gold">
       <ellipse cx="300" cy="25" rx="3.4" ry="2"/>
       <path d="M298.2 24c-.4-4 .2-8 1.1-10.6h1.4c.9 2.6 1.5 6.6 1.1 10.6z"/>
       <circle cx="300" cy="11.6" r="2.1"/>
-      <path class="t-trumpet" d="M301 15.4 309 8.6" />
+      <path class="trumpet" d="M301 15.4 309 8.6"/>
       <path d="M307.6 7.2l3.6-.9-1 3.6z"/>
     </g>
-  </g>
-</svg>"""
+  </svg>"""
 
 
 TEMPLE_SCRIPT = """<script>
 (function(){
   var art=document.querySelector('.temple-art');if(!art)return;
-  var stages=['s-ground','s-steps','s-walls','s-tower','s-spire','s-gold','s-dusk','s-lights'];
-  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){art.classList.add.apply(art.classList,stages);return}
-  var times=[200,800,1300,2100,2800,3400,4300,5000];
-  function run(){
-    art.classList.remove.apply(art.classList,stages);
-    times.forEach(function(t,i){setTimeout(function(){art.classList.add(stages[i])},t)});
-  }
-  run();
-  art.addEventListener('click',run);
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){art.classList.add('go');return}
+  var timer,seen=false;
+  function draw(){art.classList.remove('out');art.classList.add('go');timer=setTimeout(fade,9000)}
+  function fade(){art.classList.add('out');timer=setTimeout(function(){art.classList.remove('go','out');requestAnimationFrame(function(){requestAnimationFrame(draw)})},900)}
+  function start(){if(seen)return;seen=true;setTimeout(draw,250)}
+  if('IntersectionObserver' in window){new IntersectionObserver(function(es,o){if(es[0].isIntersecting){o.disconnect();start()}},{threshold:.35}).observe(art)}else{start()}
+  art.addEventListener('click',function(){clearTimeout(timer);art.classList.remove('go','out');requestAnimationFrame(function(){requestAnimationFrame(draw)})});
 })();
 </script>"""
 
