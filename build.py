@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds index.html, little-rock.html, events.html and the FAQ pages from the data below. Run: python3 build.py
+"""Builds index.html, little-rock.html, the coming-soon class pages, events.html (All Events), one events page per location and the FAQ pages from the data below. Run: python3 build.py
 
 Edit the class time, events and units here, then rebuild.
 Unit times come from each unit's page on local.churchofjesuschrist.org (checked 2026-10-23).
@@ -33,6 +33,7 @@ LOCATIONS = [
         "facts": [("clock", CLASS_TIME), ("pin", "A home in Benton")],
         "class_note": "The class meets in a home in Benton and is open to young single and married adults ages 18 to 35, and to their friends.",
         "page": "little-rock.html",
+        "events": "events-benton.html",
     },
     {
         "id": "conway",
@@ -41,7 +42,9 @@ LOCATIONS = [
         "class_title": "Conway institute class",
         "facts": [("clock", "Class night posting soon"), ("pin", "Conway")],
         "class_note": f"Until the Conway schedule posts, you're welcome at the Benton class {CLASS_TIME_PHRASE}.",
-        "page": None,
+        "page": "conway.html",
+        "soon": True,
+        "events": "events-conway.html",
     },
     {
         "id": "cabot",
@@ -54,9 +57,14 @@ LOCATIONS = [
             ("calendar", "Searcy Stake young adults also share a monthly break-the-fast meal and a monthly Saturday activity"),
         ],
         "class_note": f"Until the Cabot schedule posts, you're welcome at the Benton class {CLASS_TIME_PHRASE}.",
-        "page": None,
+        "page": "cabot.html",
+        "soon": True,
+        "events": "events-cabot.html",
     },
 ]
+
+LOC = {s["id"]: s for s in LOCATIONS}
+SITE_NAV = [(s["name"], s["page"]) for s in LOCATIONS] + [("All Events", "events.html"), ("FAQ", "faq.html")]
 
 ICONS = {
     "book": '<path d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1z"/><path d="M12 6.5V20"/>',
@@ -270,7 +278,9 @@ def foot(cta_href, heading="Bring a friend to institute this Tuesday", label="Pl
     <ul class="foot-links">
       <li><a href="index.html#stakes">Benton, Conway and Cabot</a></li>
       <li><a href="little-rock.html">Benton class</a></li>
-      <li><a href="events.html">Upcoming events</a></li>
+      <li><a href="conway.html">Conway class</a></li>
+      <li><a href="cabot.html">Cabot class</a></li>
+      <li><a href="events.html">All events</a></li>
       <li><a href="faq.html">FAQ</a></li>
       <li><a href="new-to-the-church.html">New to the Church?</a></li>
     </ul>
@@ -330,11 +340,12 @@ def location_tabs():
             f'<span class="tab-name">{s["name"]}</span><span class="tab-sub">{esc(s["sub"])}</span></button>'
         )
         facts = "".join(f"<li>{icon(k, 22)}<span>{esc(v)}</span></li>" for k, v in s["facts"])
-        if s["page"]:
-            buttons = (f'<a class="btn btn-cream" href="{s["page"]}">See the {s["name"]} class</a>'
-                       '<p class="card-link"><a href="#register">How to register</a></p>')
+        if s.get("soon"):
+            buttons = (f'<a class="btn btn-cream" href="{s["events"]}">{s["name"]} events</a>'
+                       f'<p class="card-link"><a href="{s["page"]}">{s["name"]} class page: coming soon</a></p>')
         else:
-            buttons = '<a class="btn btn-cream" href="#register">How to register</a>'
+            buttons = (f'<a class="btn btn-cream" href="{s["page"]}">See the {s["name"]} class</a>'
+                       f'<p class="card-link"><a href="{s["events"]}">{s["name"]} events</a></p>')
         panels.append(f"""<div class="panel" role="tabpanel" id="panel-{s['id']}" aria-labelledby="tab-{s['id']}" tabindex="0">
   <div class="panel-grid">
     <div class="class-card">
@@ -457,7 +468,7 @@ def index():
         "address": POSTAL,
         "areaServed": ["Benton, AR", "Conway, AR", "Cabot, AR", "Little Rock, AR", "North Little Rock, AR", "Searcy, AR"],
     }
-    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = SITE_NAV
     out = head(
         "Institute Classes in Benton, Conway and Cabot | Central Arkansas Young Adults",
         "Free weekly institute classes for young adults 18 to 35 in Benton, Conway and Cabot. "
@@ -546,12 +557,12 @@ ICS_FILE = "little-rock-institute.ics"
 EVENTS = [
     {"slug": "bednar-devotional-2026-11-21", "date": "2026-11-21", "start": "160000", "end": "180000", "time": "4:00 PM",
      "title": "Young Adult Devotional with Elder Eric Bednar",
-     "place": "Little Rock Arkansas Stake Center, 13901 Quail Run Drive, Little Rock",
+     "place": "Little Rock Arkansas Stake Center, 13901 Quail Run Drive, Little Rock", "where": ["benton", "conway", "cabot"],
      "note": "Dinner from 4:00 to 4:45, then Elder Eric Bednar, an Area Seventy, speaks from 5:00 to 6:00. "
              "For young adults 18 to 35, single and married, from the Little Rock, North Little Rock and Searcy stakes."},
     {"slug": "christmas-devotional-2026-12-06", "date": "2026-12-06", "start": "190000", "end": "200000", "time": "7:00 PM",
      "title": "First Presidency's Christmas Devotional",
-     "place": "Broadcast on Gospel Library and the Church's YouTube channel",
+     "place": "Broadcast on Gospel Library and the Church's YouTube channel", "where": ["benton", "conway", "cabot"],
      "note": "Music and messages about the birth of Jesus Christ from the First Presidency."},
 ]
 BUILD_DATE = "2026-11-04"
@@ -588,19 +599,35 @@ def event_ics(e):
         "END:VEVENT", "END:VCALENDAR", ""])
 
 
-def events_section(heading_tag="h2"):
+def where_label(where):
+    names = [LOC[w]["name"] for w in where]
+    if len(names) == len(LOCATIONS):
+        return "All locations: " + ", ".join(names[:-1]) + " and " + names[-1]
+    return " and ".join(names)
+
+
+def event_tabs(loc):
+    items = [("All Events", "events.html", loc is None)] + [(s["name"], s["events"], loc == s["id"]) for s in LOCATIONS]
+    links = "".join(f'<a href="{href}"{" aria-current=" + chr(34) + "page" + chr(34) if on else ""}>{name}</a>' for name, href, on in items)
+    return f'<nav class="ev-tabs" aria-label="Events by location">{links}</nav>'
+
+
+def events_section(heading_tag="h2", loc=None, tabs=False):
     import datetime as dt
-    rows = [f"""<li class="event">
+    rows = []
+    if loc in (None, "benton"):
+        rows.append(f"""<li class="event">
         <div class="event-date" aria-hidden="true"><span class="ev-small">Every</span><span class="ev-big">Tue</span><span class="ev-small">7 PM</span></div>
         <div class="event-body">
-          <h3>Institute class</h3>
+          <h3>Benton institute class</h3>
           <p class="ev-meta">{CLASS_TIME}, a home in Benton</p>
+          <p class="ev-where">{icon('pin', 18)}<span>Benton</span></p>
           <p>A lesson, food and games. Can't make the drive? Join on Zoom with the link in our GroupMe.</p>
           {cal_links(ICS_FILE, CLASS_GCAL)}
         </div>
-      </li>"""]
+      </li>""")
     for e in EVENTS:
-        if e["date"] < BUILD_DATE:
+        if e["date"] < BUILD_DATE or (loc and loc not in e["where"]):
             continue
         d = dt.date.fromisoformat(e["date"])
         day = e["date"].replace("-", "")
@@ -609,23 +636,35 @@ def events_section(heading_tag="h2"):
         <div class="event-body">
           <h3>{esc(e['title'])}</h3>
           <p class="ev-meta"><time datetime="{e['date']}">{d.strftime('%A, %B')} {d.day}</time>, {e['time']} Central. {esc(e['place'])}</p>
+          <p class="ev-where">{icon('pin', 18)}<span>{esc(where_label(e['where']))}</span></p>
           <p>{esc(e['note'])}</p>
           {cal_links(f"events/{e['slug']}.ics", {"text": e["title"], "dates": f"{day}T{e['start']}/{day}T{e['end']}", "location": e["place"], "details": e["note"]})}
         </div>
       </li>""")
+    if loc is None:
+        title, lead = "All upcoming events", "Every class and devotional for young adults in Benton, Conway and Cabot."
+    else:
+        name = LOC[loc]["name"]
+        title = f"Upcoming events in {name}"
+        lead = ("Class every Tuesday, plus devotionals for young adults." if loc == "benton"
+                else f"The {name} class schedule is coming soon. These events are open to young adults in {name} now.")
+    more = "" if loc is None else '<div class="cta-row"><a class="btn btn-line" href="events.html">All Events</a></div>'
     return f"""<section id="events" aria-labelledby="events-title">
   <div class="wrap">
     <div class="section-head">
-      <{heading_tag} id="events-title">Upcoming events</{heading_tag}>
-      <p class="lead">Class every Tuesday, plus devotionals for young adults.</p>
+      <{heading_tag} id="events-title">{title}</{heading_tag}>
+      <p class="lead">{lead}</p>
     </div>
+    {event_tabs(loc) if tabs else ""}
     <ul class="events">
       {''.join(rows)}
     </ul>
+    <p class="ev-empty" hidden>New events are coming soon. Check <a href="events.html">All Events</a> or the GroupMe.</p>
+    {more}
   </div>
 </section>
 <script>
-(function(){{var t=new Date();t.setHours(0,0,0,0);document.querySelectorAll('.event[data-date]').forEach(function(el){{var p=el.dataset.date.split('-');if(new Date(+p[0],p[1]-1,+p[2])<t)el.remove()}})}})();
+(function(){{var t=new Date();t.setHours(0,0,0,0);document.querySelectorAll('.event[data-date]').forEach(function(el){{var p=el.dataset.date.split('-');if(new Date(+p[0],p[1]-1,+p[2])<t)el.remove()}});document.querySelectorAll('.events').forEach(function(u){{if(!u.children.length){{var m=u.parentNode.querySelector('.ev-empty');if(m)m.hidden=false}}}})}})();
 </script>"""
 
 
@@ -661,7 +700,7 @@ def little_rock():
         "address": POSTAL,
         "areaServed": ["Little Rock, AR", "Benton, AR", "Bryant, AR", "Hot Springs, AR", "Pine Bluff, AR", "Malvern, AR", "Arkadelphia, AR"],
     }
-    nav = [("Where we meet", "little-rock.html#visit"), ("Events", "events.html"), ("First Tuesday", "little-rock.html#first-tuesday"), ("FAQ", "faq.html")]
+    nav = [("Where we meet", "little-rock.html#visit"), ("Events", "events-benton.html"), ("First Tuesday", "little-rock.html#first-tuesday"), ("FAQ", "faq.html")]
     extra = (ld_script(ld) + '\n<link rel="preload" href="fonts/caveat-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>')
     out = head(
         "Little Rock Stake Institute, Tuesdays at 7 PM in Benton | Central Arkansas Young Adults",
@@ -740,7 +779,7 @@ def little_rock():
   </div>
 </section>
 
-{events_section()}
+{events_section(loc="benton")}
 
 <section id="first-tuesday" class="band" aria-labelledby="first-title">
   <div class="wrap">
@@ -795,7 +834,7 @@ def faq_ld(items):
 
 
 def faq():
-    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = SITE_NAV
     out = head(
         "Institute FAQ: Classes, myInstitute and YSA Wards | Central Arkansas Young Adults",
         "Answers about institute classes, myInstitute registration, credit and YSA wards for young adults in the "
@@ -827,7 +866,7 @@ def faq():
 
 
 def church_faq():
-    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
+    nav = SITE_NAV
     out = head(
         "New to the Church of Jesus Christ? Common Questions | Central Arkansas Young Adults",
         "Plain answers to common questions about Latter-day Saints: beliefs about Jesus Christ, the Book of Mormon, "
@@ -857,16 +896,21 @@ def church_faq():
     return out
 
 
-def events_page():
-    nav = [("Locations", "index.html#stakes"), ("Benton class", "little-rock.html"), ("Events", "events.html"), ("FAQ", "faq.html")]
-    out = head(
-        "Upcoming Events for Young Adults in Central Arkansas | Central Arkansas Young Adults",
-        "Institute every Tuesday at 7 PM in Benton, the Nov. 21 young adult devotional with Elder Eric Bednar, "
-        "and other events for young adults 18 to 35 in the Little Rock Stake.",
-        "events.html", "ysa-home", nav, body_class="warm",
-    )
+def events_page(loc=None):
+    nav = SITE_NAV
+    if loc is None:
+        title = "All Events for Young Adults in Central Arkansas | Central Arkansas Young Adults"
+        desc = ("Every upcoming class and devotional for young adults 18 to 35 in Benton, Conway and Cabot, "
+                "including the Nov. 21 young adult devotional with Elder Eric Bednar.")
+        path = "events.html"
+    else:
+        name = LOC[loc]["name"]
+        title = f"Upcoming Events in {name} for Young Adults | Central Arkansas Young Adults"
+        desc = f"Upcoming institute classes and devotionals for young adults 18 to 35 in {name}, Arkansas."
+        path = LOC[loc]["events"]
+    out = head(title, desc, path, "ysa-home", nav, body_class="warm")
     out += f"""<main id="main" class="events-page">
-{events_section(heading_tag="h1")}
+{events_section(heading_tag="h1", loc=loc, tabs=True)}
 <section class="band" aria-labelledby="updates-title">
   <div class="wrap narrow center">
     <h2 id="updates-title">See every update in the GroupMe</h2>
@@ -878,14 +922,116 @@ def events_page():
     return out
 
 
+# Windows along the temple's two wings: x positions, lit one after another
+TEMPLE_WINDOWS = [150, 184, 218, 362, 396, 430]
+TEMPLE_STARS = [(70, 40, 1.6), (130, 78, 1.1), (205, 30, 1.3), (402, 44, 1.2), (470, 82, 1.6), (536, 36, 1.1), (560, 104, 1.3), (40, 112, 1.1)]
+
+
+def temple_art():
+    wins = "\n".join(
+        f'<path class="t-win" style="--i:{i}" d="M{x} 262v-26a9 9 0 0 1 18 0v26z"/>' for i, x in enumerate(TEMPLE_WINDOWS))
+    stars = "\n".join(
+        f'<circle class="t-star" style="--i:{i}" cx="{x}" cy="{y}" r="{r}"/>' for i, (x, y, r) in enumerate(TEMPLE_STARS))
+    return f"""<svg class="temple-art" viewBox="0 0 600 340" role="img" aria-label="A temple with a single spire takes shape: the lawn and steps appear, the walls and tower rise, a gold statue of an angel appears on top of the spire, then the evening sky darkens and the windows light up.">
+  <defs>
+    <linearGradient id="t-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE0E6"/><stop offset="1" stop-color="#F4EEDF"/></linearGradient>
+    <linearGradient id="t-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E2F45"/><stop offset=".65" stop-color="#5B4E6B"/><stop offset="1" stop-color="#E9B97A"/></linearGradient>
+    <linearGradient id="t-stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF8"/><stop offset="1" stop-color="#E8E0D0"/></linearGradient>
+    <radialGradient id="t-halo"><stop offset="0" stop-color="#FFE3A6" stop-opacity=".55"/><stop offset="1" stop-color="#FFE3A6" stop-opacity="0"/></radialGradient>
+    <clipPath id="t-frame"><rect width="600" height="340" rx="28"/></clipPath>
+  </defs>
+  <g clip-path="url(#t-frame)">
+    <rect class="t-sky" width="600" height="340" fill="url(#t-day)"/>
+    <rect class="t-sky-dusk" width="600" height="340" fill="url(#t-dusk)"/>
+    {stars}
+    <ellipse class="t-halo" cx="300" cy="200" rx="230" ry="150" fill="url(#t-halo)"/>
+    <path class="t-lawn" d="M0 290C120 276 480 276 600 290V340H0z"/>
+    <path class="t-walk" d="M286 340 292 300h16l6 40z"/>
+    <g class="t-tree" style="--x:62px"><rect x="58" y="252" width="8" height="34" rx="3" class="t-trunk"/><circle cx="62" cy="242" r="24" class="t-leaf"/></g>
+    <g class="t-tree" style="--x:538px"><rect x="534" y="252" width="8" height="34" rx="3" class="t-trunk"/><circle cx="538" cy="242" r="24" class="t-leaf"/></g>
+    <rect class="t-step" x="120" y="288" width="360" height="10" rx="2"/>
+    <rect class="t-step" x="132" y="280" width="336" height="10" rx="2"/>
+    <g class="t-walls">
+      <rect class="t-stone" x="138" y="214" width="324" height="68" rx="2"/>
+      <rect class="t-trim" x="132" y="208" width="336" height="8" rx="2"/>
+      {wins}
+    </g>
+    <g class="t-tower">
+      <rect class="t-stone" x="258" y="150" width="84" height="132" rx="2"/>
+      <rect class="t-trim" x="252" y="144" width="96" height="8" rx="2"/>
+      <path class="t-door" d="M286 282v-30a14 14 0 0 1 28 0v30z"/>
+      <path class="t-win t-win-tall" style="--i:6" d="M292 222v-36a8 8 0 0 1 16 0v36z"/>
+      <rect class="t-stone" x="272" y="112" width="56" height="34" rx="2"/>
+      <rect class="t-trim" x="268" y="108" width="64" height="6" rx="2"/>
+      <rect class="t-stone" x="284" y="86" width="32" height="24" rx="2"/>
+    </g>
+    <path class="t-spire" d="M285 88 300 26 315 88z"/>
+    <g class="t-gold">
+      <ellipse cx="300" cy="25" rx="3.4" ry="2"/>
+      <path d="M298.2 24c-.4-4 .2-8 1.1-10.6h1.4c.9 2.6 1.5 6.6 1.1 10.6z"/>
+      <circle cx="300" cy="11.6" r="2.1"/>
+      <path class="t-trumpet" d="M301 15.4 309 8.6" />
+      <path d="M307.6 7.2l3.6-.9-1 3.6z"/>
+    </g>
+  </g>
+</svg>"""
+
+
+TEMPLE_SCRIPT = """<script>
+(function(){
+  var art=document.querySelector('.temple-art');if(!art)return;
+  var stages=['s-ground','s-steps','s-walls','s-tower','s-spire','s-gold','s-dusk','s-lights'];
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){art.classList.add.apply(art.classList,stages);return}
+  var times=[200,800,1300,2100,2800,3400,4300,5000];
+  function run(){
+    art.classList.remove.apply(art.classList,stages);
+    times.forEach(function(t,i){setTimeout(function(){art.classList.add(stages[i])},t)});
+  }
+  run();
+  art.addEventListener('click',run);
+})();
+</script>"""
+
+
+def coming_soon(loc):
+    s = LOC[loc]
+    name = s["name"]
+    out = head(
+        f"{name} Institute Class: Coming Soon | Central Arkansas Young Adults",
+        f"The {name} institute class for young adults in the {s['sub']} is coming soon. "
+        f"Until then, young adults are welcome at the Benton class {CLASS_TIME_PHRASE}.",
+        s["page"], "hero", SITE_NAV,
+    )
+    out += f"""<main id="main" class="soon-page">
+<section class="soon" aria-labelledby="soon-title">
+  <div class="wrap narrow center">
+    {temple_art()}
+    <h1 id="soon-title">{name}: coming soon</h1>
+    <p class="lead">The {name} class for the {esc(s['sub'])} is still being planned. Until it posts, you're welcome at the Benton class {CLASS_TIME_PHRASE}.</p>
+    <div class="soon-btns">
+      <a class="btn" href="{s['events']}">{name} events</a>
+      <a class="btn btn-line" href="events.html">All Events</a>
+      <a class="btn btn-line" href="little-rock.html">Benton class</a>
+    </div>
+  </div>
+</section>
+{TEMPLE_SCRIPT}"""
+    out += foot("little-rock.html#visit")
+    return out
+
+
 if __name__ == "__main__":
     (ROOT / "index.html").write_text(index())
     (ROOT / "little-rock.html").write_text(little_rock())
     (ROOT / "faq.html").write_text(faq())
     (ROOT / "events.html").write_text(events_page())
+    for s in LOCATIONS:
+        (ROOT / s["events"]).write_text(events_page(s["id"]))
+        if s.get("soon"):
+            (ROOT / s["page"]).write_text(coming_soon(s["id"]))
     (ROOT / "new-to-the-church.html").write_text(church_faq())
     (ROOT / ICS_FILE).write_bytes(ics().encode("utf-8"))
     (ROOT / "events").mkdir(exist_ok=True)
     for e in EVENTS:
         (ROOT / "events" / f"{e['slug']}.ics").write_bytes(event_ics(e).encode("utf-8"))
-    print("built index.html, little-rock.html, events.html, faq.html, new-to-the-church.html")
+    print("built index.html, little-rock.html, conway.html, cabot.html, events.html, events-<location>.html, faq.html, new-to-the-church.html")
